@@ -2,27 +2,41 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import CharacterTextSplitter, TokenTextSplitter
+from langchain_openai import OpenAIEmbeddings
+import os
+from dotenv import load_dotenv
+
 
 def main():
-    repo_path = "NA"
+    # Load environment variables from .env file
+    load_dotenv()
+    
+    # Verify API key is available
+    if not os.getenv("OPENAI_API_KEY"):
+        raise ValueError("OPENAI_API_KEY environment variable is not set")
+    
+    repo_path = "/Users/akshaykumarthakur/personal-projects/rippling-llm/confluence-docs"
     persist_dir = "chroma-db"
 
 
-    loader = DirectoryLoader(repo_path, glob="**/*.py", recursive=True)
+    loader = DirectoryLoader(repo_path, recursive=True)
     documents = loader.load()
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0, separators=["\n\n", "\n", ".", "?", "!", " ", ""])
-    split_docs = text_splitter.split_documents(documents)
+    text_splitter = CharacterTextSplitter(chunk_size=5000, chunk_overlap=0)
 
-    print(f"Loaded {len(documents)} documents and split into {len(split_docs)} chunks")
+    texts = text_splitter.split_documents(documents)
 
-    embeddings_model_name = "sentence-transformers/all-mpnet-base-v2"
-    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
+    print(f"Loaded {len(documents)} documents and split into {len(texts)} chunks")
+
+    token_text_splitter = TokenTextSplitter(chunk_size=5000, chunk_overlap=0)
+
+    chunks = token_text_splitter.split_documents(texts)
 
     vectorstore = Chroma.from_documents(
-        collection_name="docs",
-        documents=split_docs,
-        embedding=embeddings,
+        collection_name="confluence-docs",
+        documents=chunks,
+        embedding=OpenAIEmbeddings(model="text-embedding-ada-002"),
         persist_directory=persist_dir)
 
     print(f"Ingestion Complete! Embeddings stored in {persist_dir}")
