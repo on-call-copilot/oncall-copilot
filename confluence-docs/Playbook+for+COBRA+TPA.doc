@@ -1,0 +1,689 @@
+Message-ID: <165587929.97.1742196791509@41f2a94eb8b9>
+Subject: Exported From Confluence
+MIME-Version: 1.0
+Content-Type: multipart/related; 
+	boundary="----=_Part_96_2112419251.1742196791508"
+
+------=_Part_96_2112419251.1742196791508
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file:///C:/exported.html
+
+<html xmlns:o=3D'urn:schemas-microsoft-com:office:office'
+      xmlns:w=3D'urn:schemas-microsoft-com:office:word'
+      xmlns:v=3D'urn:schemas-microsoft-com:vml'
+      xmlns=3D'urn:w3-org-ns:HTML'>
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8=
+">
+    <title>Playbook for COBRA TPA</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:TargetScreenSize>1024x640</o:TargetScreenSize>
+            <o:PixelsPerInch>72</o:PixelsPerInch>
+            <o:AllowPNG/>
+        </o:OfficeDocumentSettings>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>90</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+                <!--
+        @page Section1 {
+            size: 8.5in 11.0in;
+            margin: 1.0in;
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-paper-source: 0;
+        }
+
+        table {
+            border: solid 1px;
+            border-collapse: collapse;
+        }
+
+        table td, table th {
+            border: solid 1px;
+            padding: 5px;
+        }
+
+        td {
+            page-break-inside: avoid;
+        }
+
+        tr {
+            page-break-after: avoid;
+        }
+
+        div.Section1 {
+            page: Section1;
+        }
+
+        /* Confluence print stylesheet. Common to all themes for print medi=
+a */
+/* Full of !important until we improve batching for print CSS */
+
+@media print {
+    #main {
+        padding-bottom: 1em !important; /* The default padding of 6em is to=
+o much for printouts */
+    }
+
+    body {
+        font: var(--ds-font-body-small, Arial, Helvetica, FreeSans, sans-se=
+rif);
+    }
+
+    body, #full-height-container, #main, #page, #content, .has-personal-sid=
+ebar #content {
+        background: var(--ds-surface, #fff) !important;
+        color: var(--ds-text, #000) !important;
+        border: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    a, a:link, a:visited, a:focus, a:hover, a:active {
+        color: var(--ds-text, #000);
+    }
+
+    #content h1,
+    #content h2,
+    #content h3,
+    #content h4,
+    #content h5,
+    #content h6 {
+        page-break-after: avoid;
+    }
+
+    pre {
+        font: var(--ds-font-code, Monaco, "Courier New", monospace);
+    }
+
+    #header,
+    .aui-header-inner,
+    #navigation,
+    #sidebar,
+    .sidebar,
+    #personal-info-sidebar,
+    .ia-fixed-sidebar,
+    .page-actions,
+    .navmenu,
+    .ajs-menu-bar,
+    .noprint,
+    .inline-control-link,
+    .inline-control-link a,
+    a.show-labels-editor,
+    .global-comment-actions,
+    .comment-actions,
+    .quick-comment-container,
+    #addcomment {
+        display: none !important;
+    }
+
+    /* CONF-28544 cannot print multiple pages in IE */
+    #splitter-content {
+        position: relative !important;
+    }
+
+    .comment .date::before {
+        content: none !important; /* remove middot for print view */
+    }
+
+    h1.pagetitle img {
+        height: auto;
+        width: auto;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    #footer {
+        position: relative !important; /* CONF-17506 Place the footer at en=
+d of the content */
+        margin: 0;
+        padding: 0;
+        background: none;
+        clear: both;
+    }
+
+    #poweredby {
+        border-top: none;
+        background: none;
+    }
+
+    #poweredby li.print-only {
+        display: list-item;
+        font-style: italic;
+    }
+
+    #poweredby li.noprint {
+        display: none;
+    }
+
+    /* no width controls in print */
+    .wiki-content .table-wrap,
+    .wiki-content p,
+    .panel .codeContent,
+    .panel .codeContent pre,
+    .image-wrap {
+        overflow: visible !important;
+    }
+
+    /* TODO - should this work? */
+    #children-section,
+    #comments-section .comment,
+    #comments-section .comment .comment-body,
+    #comments-section .comment .comment-content,
+    #comments-section .comment p {
+        page-break-inside: avoid;
+    }
+
+    #page-children a {
+        text-decoration: none;
+    }
+
+    /**
+     hide twixies
+
+     the specificity here is a hack because print styles
+     are getting loaded before the base styles. */
+    #comments-section.pageSection .section-header,
+    #comments-section.pageSection .section-title,
+    #children-section.pageSection .section-header,
+    #children-section.pageSection .section-title,
+    .children-show-hide {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .children-show-hide.icon {
+        display: none;
+    }
+
+    /* personal sidebar */
+    .has-personal-sidebar #content {
+        margin-right: 0px;
+    }
+
+    .has-personal-sidebar #content .pageSection {
+        margin-right: 0px;
+    }
+
+    .no-print, .no-print * {
+        display: none !important;
+    }
+}
+-->
+    </style>
+</head>
+<body>
+    <h1>Playbook for COBRA TPA</h1>
+    <div class=3D"Section1">
+        <style type=3D"text/css">/*<![CDATA[*/
+div.rbtoc1742196791494 {padding: 0px;}
+div.rbtoc1742196791494 ul {list-style: none;margin-left: 0px;}
+div.rbtoc1742196791494 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style>
+<div class=3D"toc-macro rbtoc1742196791494">
+<ul class=3D"toc-indentation">
+<li><a href=3D"#PlaybookforCOBRATPA-What=E2=80=99sCOBRATPA?">What=E2=80=99s=
+ COBRA TPA?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-What=E2=80=99sthepurposebehindthelaunch=
+?">What=E2=80=99s the purpose behind the launch?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Whoisthisavailabletorightnow?">Who is t=
+his available to right now?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-COBRATPATracker">COBRA TPA Tracker</a><=
+/li>
+<li><a href=3D"#PlaybookforCOBRATPA-DoesRippling=E2=80=99sCOBRATPAapplytost=
+ateCOBRA?">Does Rippling=E2=80=99s COBRA TPA apply to state COBRA?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-WhatwillRippling=E2=80=99sCOBRATPAconsi=
+stof?">What will Rippling=E2=80=99s COBRA TPA consist of?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-HowsetupCOBRATPA?">How set up COBRA TPA=
+?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-HowmanystepswillittaketocompletetheCOBR=
+ATPAauthorizationprocess?">How many steps will it take to complete the COBR=
+A TPA authorization process?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-IfanadminreachesoutaboutaCOBRAenrollmen=
+tissue,whattodo?">If an admin reaches out about a COBRA enrollment issue, w=
+hat to do?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-FAQs">FAQs</a>
+<ul class=3D"toc-indentation">
+<li><a href=3D"#PlaybookforCOBRATPA-Q1:WhenadminsarecompletingCOBRATPA,whos=
+houldtheyreachouttoaftercompletingtheportalaccessforms?">Q1: When admins ar=
+e completing COBRA TPA, who should they reach out to after completing the p=
+ortal access forms?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q2:Howlongwillittakeinsurancecarriersto=
+processtheportalaccesstoRippling?">Q2: How long will it take insurance carr=
+iers to process the portal access to Rippling?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q3:Whatcontactinformationshouldweprovid=
+ewhencarriers/COBRAvendorisrequestthis?">Q3: What contact information shoul=
+d we provide when carriers/ COBRA vendor is request this?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q4:HowdoverifyifacompanyhascompletedCOB=
+RATPA?">Q4: How do verify if a company has completed COBRA TPA?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q5:Doesacompanyneedtore-authorizeRippli=
+ngasCOBRATPAeachplanyear?">Q5: Does a company need to re-authorize Rippling=
+ as COBRA TPA each plan year?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q6:DoesacompanyneedtoreauthorizeRipplin=
+gasaCOBRATPAafterswitchinginsurancecarriersandthenreturningtotheoriginalcar=
+rier?">Q6: Does a company need to reauthorize Rippling as a COBRA TPA after=
+ switching insurance carriers and then returning to the original carrier?</=
+a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q7:WillRipplingmanageinvoiceswhensettin=
+gupTPAauthorization?">Q7: Will Rippling manage invoices when setting up TPA=
+ authorization?</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q8:TBD">Q8: TBD</a></li>
+<li><a href=3D"#PlaybookforCOBRATPA-Q9:TBD">Q9: TBD</a></li>
+</ul></li>
+</ul>
+</div>
+<h2 id=3D"PlaybookforCOBRATPA-What=E2=80=99sCOBRATPA?">What=E2=80=99s COBRA=
+ TPA?</h2>
+<p>COBRA TPA stands for COBRA Third Party Administrator (TPA).</p>
+<h2 id=3D"PlaybookforCOBRATPA-What=E2=80=99sthepurposebehindthelaunch?">Wha=
+t=E2=80=99s the purpose behind the launch?</h2>
+<p>Before the launch of COBRA TPA, companies that used a third-party broker=
+ would push back to the admin to contact their broker/enrollment manager. T=
+his way, the broker/enrollment manager can directly reach out to the insura=
+nce carriers to resolve any enrollment or termination discrepancies for COB=
+RA participants.</p>
+<p>Now, companies that used a third-party broker must authorize Rippling as=
+ their COBRA third-party administrator (TPA) in order to process COBRA enro=
+llments and troubleshoot any issues or discrepancies related to their termi=
+nated employees=E2=80=99 COBRA coverage. With Rippling as their COBRA TPA, =
+we will interact directly with COBRA participants and the insurance carrier=
+ on their behalf through carrier portal access.</p>
+<h2 id=3D"PlaybookforCOBRATPA-Whoisthisavailabletorightnow?">Who is this av=
+ailable to right now?</h2>
+<p>We released beta COBRA TPA to Bennie's companies on 09/23/2024. This mea=
+ns that companies who partner with Bennie as their third party broker, will=
+ be able to authorize Rippling as a COBRA TPA. During beta testing, compani=
+es would have access to the new admin COBRA dashboard.</p>
+<h2 id=3D"PlaybookforCOBRATPA-COBRATPATracker">COBRA TPA Tracker</h2>
+<p>There will be defined actions in the COBRA app to complete TPA for the f=
+ollowing insurance carriers below. The <a href=3D"https://docs.google.com/s=
+preadsheets/d/1vJWxb7i-zZ5xIWyVswn2G_bK0LaRTi86YkV5EDo6xrg/edit?gid=3D10650=
+20223#gid=3D1065020223" class=3D"external-link" rel=3D"nofollow">COBRA Carr=
+ier TPA tracker</a> has pre-defined questions from the insurance carriers.<=
+/p>
+<ul>
+<li>
+<p>Guardian</p></li>
+<li>
+<p>UHC</p></li>
+<li>
+<p>Kaiser</p></li>
+<li>
+<p>Principal</p></li>
+<li>
+<p>Beam</p></li>
+<li>
+<p>BCBS TX</p></li>
+<li>
+<p>Cigna</p></li>
+<li>
+<p>Blue Shield</p></li>
+</ul>
+<p>All other carriers will require the admin to reach out to their carrier =
+directly</p>
+<h2 id=3D"PlaybookforCOBRATPA-DoesRippling=E2=80=99sCOBRATPAapplytostateCOB=
+RA?">Does Rippling=E2=80=99s COBRA TPA apply to state COBRA?</h2>
+<p>Rippling=E2=80=99s TPA access is exclusive to federal COBRA coverage. Ri=
+ppling will not manage for any BOB groups who are subject to state COBRA. Y=
+ou will need to push back if you receive any cases for any BOB who are subj=
+ect to state COBRA.</p>
+<h2 id=3D"PlaybookforCOBRATPA-WhatwillRippling=E2=80=99sCOBRATPAconsistof?"=
+>What will Rippling=E2=80=99s COBRA TPA consist of?</h2>
+<p>Once a company gives Rippling COBRA TPA access, Rippling will work with =
+the carrier directly on the company=E2=80=99s behalf to handle any enrollme=
+nt, cancellation, or coverage change issues or discrepancies that surface f=
+or COBRA participants only. Rippling cannot be authorized as their TPA an a=
+n authorized contact to work with the carrier on discrepancies or issues re=
+lated to their active employees=E2=80=99 enrollments, terminations, or cove=
+rage changes.</p>
+<h2 id=3D"PlaybookforCOBRATPA-HowsetupCOBRATPA?">How set up COBRA TPA?</h2>
+<p><strong>Option 1: </strong>They are setting up COBRA in Rippling for the=
+ first time</p>
+<ol start=3D"1">
+<li>
+<p>From the Rippling sidebar, open the&nbsp;App Shop.</p></li>
+<li>
+<p>Find&nbsp;COBRA&nbsp;by using the search bar or navigational tabs on the=
+ left side of the page. Once you=E2=80=99ve located and selected COBRA, you=
+=E2=80=99ll be taken to the COBRA set up flow.</p></li>
+<li>
+<p>Complete the prompts and&nbsp;continue through the flow&nbsp;until you r=
+each the&nbsp;COBRA Third Party Administrator (TPA) step.</p></li>
+</ol><span class=3D"confluence-embedded-file-wrapper image-center-wrapper c=
+onfluence-embedded-manual-size"><img class=3D"confluence-embedded-image con=
+fluence-external-resource image-center" alt=3D"COBRA TPA step setup process=
+.png" width=3D"666" src=3D"https://help.rippling.com/servlet/rtaImage?eid=
+=3Dka0Ud0000005Mkf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rFsT"=
+ data-image-src=3D"https://help.rippling.com/servlet/rtaImage?eid=3Dka0Ud00=
+00005Mkf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rFsT" loading=
+=3D"lazy"></span>
+<ol start=3D"4">
+<li>
+<p>They will access the steps to authorize Rippling as their COBRA TPA.&nbs=
+p;</p></li>
+</ol><span class=3D"confluence-embedded-file-wrapper image-center-wrapper c=
+onfluence-embedded-manual-size"><img class=3D"confluence-embedded-image con=
+fluence-external-resource image-center" alt=3D"I will do this later (COBRA =
+TPA).png" width=3D"660" src=3D"https://help.rippling.com/servlet/rtaImage?e=
+id=3Dka0Ud0000005Mkf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rAR=
+O" data-image-src=3D"https://help.rippling.com/servlet/rtaImage?eid=3Dka0Ud=
+0000005Mkf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rARO" loading=
+=3D"lazy"></span>
+<p><strong>Option 2:</strong> If the company is administering COBRA through=
+ Rippling already</p>
+<ol start=3D"1">
+<li>
+<p>From the Rippling sidebar, open <strong>Benefits</strong> &gt; <strong>B=
+enefits Admin</strong>.</p></li>
+<li>
+<p>On the <em>Benefits</em> tab &gt; <em>Current benefits </em>sub-tab, scr=
+oll down and click <strong>COBRA</strong>.</p></li>
+<li>
+<p>Select the&nbsp;Settings&nbsp;tab &gt;&nbsp;TPA authorization&nbsp;sub-t=
+ab.</p></li>
+</ol><span class=3D"confluence-embedded-file-wrapper image-center-wrapper c=
+onfluence-embedded-manual-size"><img class=3D"confluence-embedded-image con=
+fluence-external-resource image-center" alt=3D"TPA auth tab (COBRA TPA).png=
+" width=3D"692" src=3D"https://help.rippling.com/servlet/rtaImage?eid=3Dka0=
+Ud0000005Mkf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rGTZ" data-=
+image-src=3D"https://help.rippling.com/servlet/rtaImage?eid=3Dka0Ud0000005M=
+kf&amp;feoid=3D00N4o00000GMSgX&amp;refid=3D0EMUd000005rGTZ" loading=3D"lazy=
+"></span>
+<p>For more information, please refer to the HC article on <a href=3D"https=
+://help.rippling.com/s/article/141691622319" class=3D"external-link" rel=3D=
+"nofollow">how to authorize Rippling as your COBRA third-party administrato=
+r (TPA)</a>.</p>
+<h2 id=3D"PlaybookforCOBRATPA-HowmanystepswillittaketocompletetheCOBRATPAau=
+thorizationprocess?">How many steps will it take to complete the COBRA TPA =
+authorization process?</h2>
+<p>There will be two steps to complete the COBRA TPA authorization process.=
+ When the company reaches the COBRA TPA authorization step of the setup flo=
+w or section within the Benefits Admin app &gt; COBRA, they=E2=80=99ll typi=
+cally see their carriers listed, with two steps below each one. The first s=
+tep will be to request TPA authorization for Rippling from their insurance =
+carrier.</p>
+<ol start=3D"1">
+<li>
+<p>Request TPA authorization from your insurance carrier.</p>
+<ol start=3D"1">
+<li>
+<p>See below for the most common TPA authorization options provided by carr=
+iers:</p>
+<ul>
+<li>
+<p>Request TPA authorization through the online carrier portal.</p></li>
+<li>
+<p>Request TPA authorization by submitting a carrier-specific form.</p></li=
+>
+<li>
+<p>Request TPA authorization by contacting your carrier directly.&nbsp;</p>=
+</li>
+</ul></li>
+</ol></li>
+<li>
+<p>Grant portal access to Rippling.</p>
+<ul>
+<li>
+<p>If they have any questions, please direct the admin to contact the carri=
+er directly for assistance.</p></li>
+</ul></li>
+</ol>
+<h2 id=3D"PlaybookforCOBRATPA-IfanadminreachesoutaboutaCOBRAenrollmentissue=
+,whattodo?"><span class=3D"inline-comment-marker" data-ref=3D"1dcba116-0f50=
+-4763-b071-e6506401490a">If an admin reaches out about a COBRA enrollment i=
+ssue, what to do?</span></h2>
+<p><span class=3D"inline-comment-marker" data-ref=3D"1dcba116-0f50-4763-b07=
+1-e6506401490a">First confirm if COBRA TPA is set up for the company by ope=
+ning the company debugger and looking for the =E2=80=98COBRA third-party ad=
+ministrator (TPA) authorization info=E2=80=99 section.</span></p>
+<ol start=3D"1">
+<li>
+<p>If the company has completed the COBRA TPA setup, please fill out the in=
+ternal template with all the necessary information to transfer to Carrier C=
+ommunications team and ping Izzy (Latchme if Izzy is out of the office). Mo=
+re information on how to complete the internal template for Carriers team c=
+an be found here: <a href=3D"https://www.google.com/url?q=3Dhttps://ripplin=
+g.atlassian.net/wiki/spaces/SUP/pages/3010461801/Insurance%2BSupport%2B-%2B=
+Carrier%2BCommunications&amp;sa=3DD&amp;source=3Ddocs&amp;ust=3D17273911979=
+93443&amp;usg=3DAOvVaw0U_mK5UkVdawyMoyEGx21q" rel=3D"nofollow">https://ripp=
+ling.atlassian.net/wiki/spaces/SUP/pages/3010461801/Insurance+Support+-+Car=
+rier+Communications</a></p></li>
+<li>
+<p>If the company hasn=E2=80=99t completed the COBRA TPA setup, please info=
+rm the admin that they haven't set up and authorized Rippling as their COBR=
+A TPA.<span class=3D"inline-comment-marker" data-ref=3D"d22e967e-9eea-44a4-=
+9a51-39034f28ebbb"> In this scenario, we should direct them to their broker=
+/enrollment manager until they have authorized Rippling as the COBRA TPA. <=
+/span></p></li>
+</ol>
+<div class=3D"confluence-information-macro confluence-information-macro-inf=
+ormation">
+<span class=3D"aui-icon aui-icon-small aui-iconfont-info confluence-informa=
+tion-macro-icon"></span>
+<div class=3D"confluence-information-macro-body">
+<p>Note: Not all brokers handle COBRA enrollments. If we are communicating =
+with a BOB group and COBRA TPA is not set up please direct the admin to the=
+ correct the enrollment with the carriers but advise them that if the carri=
+er mentions they will need the request to come from the enrollments manager=
+/broker then they will need to loop them in.</p>
+</div>
+</div>
+<p><strong>*If you are unsure about the process for COBRA TPA, please come =
+to OH or swarm your case so that we can help you.</strong></p>
+<h2 id=3D"PlaybookforCOBRATPA-FAQs">FAQs</h2>
+<h3 id=3D"PlaybookforCOBRATPA-Q1:WhenadminsarecompletingCOBRATPA,whoshouldt=
+heyreachouttoaftercompletingtheportalaccessforms?">Q1: When admins are comp=
+leting COBRA TPA, who should they reach out to after completing the portal =
+access forms?</h3>
+<div id=3D"expander-582691213" class=3D"expand-container">
+<div id=3D"expander-control-582691213" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-582691213" class=3D"expand-content">
+<p>If we have carrier contact information, it will be listed on the forms, =
+and the admins will need to reach out to the carriers directly if they need=
+ help completing the portal access forms.</p>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q2:Howlongwillittakeinsurancecarrierstoproces=
+stheportalaccesstoRippling?">Q2: How long will it take insurance carriers t=
+o process the portal access to Rippling?</h3>
+<div id=3D"expander-1550515218" class=3D"expand-container">
+<div id=3D"expander-control-1550515218" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-1550515218" class=3D"expand-content">
+<p>This will be dependent on the insurance carriers. We will need to direct=
+ the admin to the insurance carrier contact information so they can have th=
+is information.</p>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q3:Whatcontactinformationshouldweprovidewhenc=
+arriers/COBRAvendorisrequestthis?">Q3: <span class=3D"inline-comment-marker=
+" data-ref=3D"2dc6be13-4019-4d82-af6c-03cf89e9cf3d">What contact informatio=
+n should we provide when carriers/ COBRA vendor is request this?</span>&nbs=
+p;</h3>
+<div id=3D"expander-2077250294" class=3D"expand-container">
+<div id=3D"expander-control-2077250294" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-2077250294" class=3D"expand-content">
+<p><strong>If its an insurance carrier asking for the contact information w=
+e can provide:</strong></p>
+<ul>
+<li>
+<p>Name: Rippling COBRA Services</p></li>
+<li>
+<p>Email: <a href=3D"mailto:cobra-ops@rippling.com" class=3D"external-link"=
+ rel=3D"nofollow">cobra-ops@rippling.com</a></p></li>
+<li>
+<p>Phone number: 800-373-4235</p></li>
+<li>
+<p>Address: 300 South Duval Street, Suite 410, Tallahassee, FL 32301</p></l=
+i>
+</ul>
+<p>If the carriers push back requesting a persons name and Job Title we can=
+ provide:</p>
+<p><strong>Name</strong>: Mohammed Faraz</p>
+<p><strong>Job Title</strong>: Enrollment Specialist</p>
+<p><strong>If its an <u>COBRA vendor</u> asking for the contact information=
+ (i.e. Wex as a COBRA vendor):</strong></p>
+<ul>
+<li>
+<p>Name: Rippling COBRA Services</p></li>
+<li>
+<p>Email: <a href=3D"mailto:support@rippling.com" class=3D"external-link" r=
+el=3D"nofollow">support@rippling.com</a></p></li>
+<li>
+<p>Phone number: 1-415-780-9292</p></li>
+<li>
+<p>Address: 2443 Fillmore St #380-7361, San Francisco, CA 94115</p></li>
+</ul>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q4:HowdoverifyifacompanyhascompletedCOBRATPA?=
+">Q4: How do verify if a company has completed COBRA TPA?</h3>
+<div id=3D"expander-1911134530" class=3D"expand-container">
+<div id=3D"expander-control-1911134530" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-1911134530" class=3D"expand-content">
+<p>You can verify this from the company debugger. Here=E2=80=99s the screen=
+shot below on where to look for this information through the company debugg=
+er.</p><span class=3D"confluence-embedded-file-wrapper image-center-wrapper=
+ confluence-embedded-manual-size"><img class=3D"confluence-embedded-image c=
+onfluence-external-resource image-center" width=3D"731" src=3D"https://lh7-=
+rt.googleusercontent.com/docsz/AD_4nXesEOpNYmGa9fApy5_CbDdkCAYnooWnfDey1vqY=
+NrOz-DPuVwUNO5qOcDbfjwpp7JTXE60Bz5_1w_wnOWtzz8fSsW2Y7CVKkxyss_YPzO7xXiyuYrb=
+T_Z74CagPNrIYOiA1eLEh8MsKaXww9lhh8F1b7to?key=3Dd74Ag20fD-6Rnx3G4mUF4A" data=
+-image-src=3D"https://lh7-rt.googleusercontent.com/docsz/AD_4nXesEOpNYmGa9f=
+Apy5_CbDdkCAYnooWnfDey1vqYNrOz-DPuVwUNO5qOcDbfjwpp7JTXE60Bz5_1w_wnOWtzz8fSs=
+W2Y7CVKkxyss_YPzO7xXiyuYrbT_Z74CagPNrIYOiA1eLEh8MsKaXww9lhh8F1b7to?key=3Dd7=
+4Ag20fD-6Rnx3G4mUF4A" loading=3D"lazy"></span>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q5:Doesacompanyneedtore-authorizeRipplingasCO=
+BRATPAeachplanyear?">Q5: Does a company&nbsp;need to re-authorize Rippling =
+as COBRA TPA each plan year?</h3>
+<div id=3D"expander-846343915" class=3D"expand-container">
+<div id=3D"expander-control-846343915" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-846343915" class=3D"expand-content">
+<p>No, if the company previously authorized Rippling as their COBRA TPA and=
+ they renew plans with the same carrier the following plan year, they do no=
+t need to reauthorize Rippling as your TPA.</p>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q6:DoesacompanyneedtoreauthorizeRipplingasaCO=
+BRATPAafterswitchinginsurancecarriersandthenreturningtotheoriginalcarrier?"=
+>Q6: Does a company need to reauthorize Rippling as a COBRA TPA after switc=
+hing insurance carriers and then returning to the original carrier?</h3>
+<div id=3D"expander-1344327912" class=3D"expand-container">
+<div id=3D"expander-control-1344327912" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-1344327912" class=3D"expand-content">
+<p>Yes, if the company=E2=80=99s plans expire with a carrier and they do no=
+t renew with them for the following plan year, Rippling=E2=80=99s COBRA TPA=
+ authorization will expire. When they add the carrier in a future plan year=
+, they will need to re-authorize Rippling again as COBRA TPA.</p>
+<p></p>
+</div>
+</div>
+<p></p>
+<h3 id=3D"PlaybookforCOBRATPA-Q7:WillRipplingmanageinvoiceswhensettingupTPA=
+authorization?">Q7: Will Rippling manage invoices when setting up TPA autho=
+rization?</h3>
+<div id=3D"expander-905248529" class=3D"expand-container">
+<div id=3D"expander-control-905248529" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">No. Their will be no change to how a group manages=
+ their invoices. They will mark the box "No" on the TPA form confirming if =
+there will be a change. </span>
+</div>
+<div id=3D"expander-content-905248529" class=3D"expand-content">
+<p></p>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q8:TBD">Q8: TBD</h3>
+<div id=3D"expander-1493640999" class=3D"expand-container">
+<div id=3D"expander-control-1493640999" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-1493640999" class=3D"expand-content">
+<p></p>
+<p></p>
+</div>
+</div>
+<h3 id=3D"PlaybookforCOBRATPA-Q9:TBD">Q9: TBD</h3>
+<div id=3D"expander-1352470557" class=3D"expand-container">
+<div id=3D"expander-control-1352470557" class=3D"expand-control">
+<span class=3D"expand-control-icon"><img style=3D"vertical-align:middle;" c=
+lass=3D"expand-control-image" src=3D"647e1c972b9cddb6c665c38f5ae2e1850bc0be=
+6f8d47f39a6883794dc3adfa9d" width=3D"16" height=3D"16"></span><span class=
+=3D"expand-control-text">Click here to expand...</span>
+</div>
+<div id=3D"expander-content-1352470557" class=3D"expand-content">
+<p></p>
+<p></p>
+</div>
+</div>
+    </div>
+</body>
+</html>
+------=_Part_96_2112419251.1742196791508
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Location: file:///C:/647e1c972b9cddb6c665c38f5ae2e1850bc0be6f8d47f39a6883794dc3adfa9d
+
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAFVBMVEX/
+//9wcHBwcHBwcHBwcHBwcHBwcHA3RenHAAAAB3RSTlMAZoiZzN3/SzZomQAAAAlwSFlzAAALEgAA
+CxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAUdEVYdENy
+ZWF0aW9uIFRpbWUANi8xLzEzOKlF0AAAACFJREFUCJljYCATsCgwqIAZTMnMyRAhsTABCIMxkVxT
+GQCLcwHyUKXpLgAAAABJRU5ErkJggg==
+------=_Part_96_2112419251.1742196791508--
