@@ -1,0 +1,41 @@
+[
+    {
+      "key": "BENINTEG-XXXX",
+      "summary": "Brief ticket summary",
+      "description": "Detailed ticket description with formatting and sometimes images",
+      "rca": {
+        "category": "Category of root cause analysis",
+        "subcategory": "Subcategory of RCA",
+        "description": "Description of the root cause"
+      },
+      "priority": "Highest/High/Medium/Low",
+      "labels": ["label1", "label2"],
+      "components": ["Component1", "Component2"],
+      "comments": [
+        {
+          "content": "Comment text with possible formatting and links",
+          "created_at": "ISO timestamp",
+          "commenter": {
+            "name": "",
+            "email": "user@rippling.com"
+          }
+        }
+      ],
+      "creator": {
+        "name": "",
+        "email": "creator@rippling.com"
+      },
+      "board_changes": [
+        {
+          "from": "Original board",
+          "to": "New board",
+          "changed_by": {
+            "name": "",
+            "email": "changer@rippling.com"
+          },
+          "changed_on": "ISO timestamp"
+        }
+      ],
+      "created_on": "ISO timestamp"
+    }
+]
