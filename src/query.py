@@ -10,7 +10,7 @@ def main():
 
     # Load the existing Chroma store
     vectorstore = Chroma(
-        collection_name="flux_apps_docs",  
+        collection_name="docs",  
         embedding_function=embeddings,
         persist_directory=persist_directory
     )

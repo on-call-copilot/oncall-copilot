@@ -4,7 +4,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
 def main():
-    repo_path = "/Users/akshaykumarthakur/github/flux-apps"
+    repo_path = "NA"
     persist_dir = "chroma-db"
 
 
@@ -20,7 +20,7 @@ def main():
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
 
     vectorstore = Chroma.from_documents(
-        collection_name="flux_apps_docs",
+        collection_name="docs",
         documents=split_docs,
         embedding=embeddings,
         persist_directory=persist_dir)
