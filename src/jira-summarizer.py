@@ -4,52 +4,43 @@ from openai import OpenAI
 import time
 from typing import Dict, List, Any
 
-# Initialize the OpenAI client
-client = OpenAI(api_key="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")
 
 # Define system prompt as a separate variable
-SYSTEM_PROMPT = """You are an expert at analyzing Jira tickets and extracting key information.
+def get_system_prompt() -> str:
+    """Get the system prompt with insurance basics overview."""
+    insurance_basics = read_markdown_file("confluence-doc-markdowns/insurance_basics_overview.md")
+    insurance_models = read_markdown_file("confluence-doc-markdowns/insurance_models_overview.md")
+    vericred_integration = read_markdown_file("confluence-doc-markdowns/vericred_integration.md")
+    jira_ticket_format = read_markdown_file("jira-ticket-format.json")
+
+    return f"""
+You are a developer in Benefits Marketplace Integrations team in Rippling.
+Rippling is a company selling HR products to other companies. These companies will have admin and employee. Admins are employee who have admin privileges.
+One of the products rippling offers is insurance in US
+Your team works on transmitting insurance benefits selected by an employee to the insurer company(called carriers internally) via some third party vendors and inhouse solutions.
+We work with following vendors for transmitting insurance benefits:
+1. Noyo
+2. Vericred also referred to as ideon 
+3. One-Konnect also referred to as Ebn 
+4. In-house solution called Stedi
+
+Admin selects lines, insurance plans, payment from cataloged plans in rippling which maps to some plans in the carrier's/vendor's catalog.
+Then employee selects the plans they want to buy, and the Benefits Marketplace Integrations team transmits the benefits to the carrier.
+Here is the detailed documentation and information about the whole process:
+
+Insurance basics overview:
+{insurance_basics}
+
+Insurance models overview:
+{insurance_models}
+
+Vericred integration:
+{vericred_integration}
+
+You are also an expert at analyzing Jira tickets and extracting key information. 
 
 The Jira tickets follow this JSON format:
-{
-  "key": "BENINTEG-XXXX",
-  "summary": "Brief ticket summary",
-  "description": "Detailed ticket description with formatting a
-  "rca": {
-    "category": "Category of root cause analysis",
-    "subcategory": "Subcategory of RCA",
-    "description": "Description of the root cause"
-  },
-  "priority": "Highest/High/Medium/Low",
-  "labels": ["label1", "label2"],
-  "components": ["Component1", "Component2"],
-  "comments": [
-    {
-      "content": "Comment text with possible formatting and links",
-      "created_at": "ISO timestamp",
-      "commenter": {
-        "name": "",
-        "email": "user@rippling.com"
-      }
-    }
-  ],
-  "creator": {
-    "name": "",
-    "email": "creator@rippling.com"
-  },
-  "board_changes": [
-    {
-      "from": "Original board",
-      "to": "New board",
-      "changed_by": {
-        "name": "",
-        "email": "changer@rippling.com"
-      },
-      "changed_on": "ISO timestamp"
-    }
-  ],
-  "created_on": "ISO timestamp"
-}
+{jira_ticket_format}
 
 Pay special attention to the description, comments, and RCA fields as they often contain the most relevant information about the issue.
 
@@ -65,14 +56,34 @@ due to which the issue occured:
     - Common project prefixes include BENINTEG, BENPNP, BENEX, but there may be others
     
     Format your response exactly as follows:
-    {{
+    ```json
         "summary": "Your summary of the ticket issue here",
         "linked_issues": ["BENINTEG-123", "BENPNP-456", ...]
-    }}
+    ```
     
     If no linked issues are found, return an empty list.
-
 """
+
+# Initialize the OpenAI client
+client = OpenAI(api_key="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")
+
+def read_markdown_file(file_path: str) -> str:
+    """
+    Read a markdown file and return its contents as a string.
+    
+    Args:
+        file_path (str): Path to the markdown file
+        
+    Returns:
+        str: The contents of the markdown file as a string
+    """
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except Exception as e:
+        print(f"Error reading markdown file {file_path}: {e}")
+        return ""
+
 
 def read_jira_data(file_path: str) -> List[Dict[str, Any]]:
     """Read Jira data from JSON file."""
@@ -102,7 +113,7 @@ def process_ticket_with_openai(ticket: Dict[str, Any]) -> Dict[str, Any]:
         response = client.chat.completions.create(
             model="gpt-4-turbo",  # You can adjust the model as needed
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": get_system_prompt()},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.1,
@@ -200,4 +211,5 @@ def main():
         print(f"Error writing to output file: {e}")
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print(get_system_prompt())
