@@ -42,6 +42,7 @@ class DataModelExtractionTool(BaseTool):
         contextualized_ticket_desc = retrieval_chain.invoke({"context": context})
 
         print(f"Context!!!: {contextualized_ticket_desc}")
+        print("------------------CONTEXT ENDSSSS---------------------")
 
         # Extract data models (using the improved context)
         extraction_prompt_template = """
