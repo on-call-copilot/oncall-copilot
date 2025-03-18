@@ -238,7 +238,7 @@ class JsonIngester:
 def ingest_jira():
     """Main function to ingest JSON files."""
     ingester = JsonIngester()
-    output_dir = "/Users/sawan/repos/oncall-copilot/outputs"
+    output_dir = "/Users/akshaykumarthakur/personal-projects/rippling-llm/outputs"
     
     try:
         for filename in os.listdir(output_dir):

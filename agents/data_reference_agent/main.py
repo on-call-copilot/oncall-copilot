@@ -14,7 +14,7 @@ def main():
 
     load_dotenv()
     openai_api_key = os.getenv("OPENAI_API_KEY")
-    repo_path = "/Users/jatinsh/Desktop/GitHub/oncall-copilot/confluence-docs"
+    repo_path = "/Users/akshaykumarthakur/personal-projects/rippling-llm/confluence-docs"
 
 
 

@@ -116,7 +116,6 @@ def process_ticket_with_openai(ticket: Dict[str, Any]) -> Dict[str, Any]:
             # Find JSON in the content
             start_index = content.find('{')
             end_index = content.rfind('}') + 1
-            
             if start_index == -1 or end_index == 0:
                 raise ValueError("No JSON found in the response")
                 
