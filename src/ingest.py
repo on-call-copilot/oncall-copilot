@@ -1,44 +1,25 @@
-from langchain_community.document_loaders import DirectoryLoader
-from langchain_community.vectorstores import Chroma
-from langchain_text_splitters import CharacterTextSplitter, TokenTextSplitter
-from langchain_openai import OpenAIEmbeddings
+import dotenv
 import os
-from dotenv import load_dotenv
+from ingest_confluence import ingest_confluence
+from json_ingest import ingest_jira
 
 
 def main():
-    # Load environment variables from .env file
-    load_dotenv()
-    
-    # Verify API key is available
+    dotenv.load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         raise ValueError("OPENAI_API_KEY environment variable is not set")
-    
-    repo_paths = ["/Users/akshaykumarthakur/personal-projects/rippling-llm/confluence-docs"]
-    persist_dir = "chroma-db"
+    ingest_type = input("Enter the type of ingestion you want to perform [confluence, jira, all]:")
 
-    for repo_path in repo_paths:
-        loader = DirectoryLoader(repo_path, recursive=True)
-        documents = loader.load()
-        text_splitter = CharacterTextSplitter(chunk_size=5000, chunk_overlap=0)
+    print(ingest_type)
+    if ingest_type == "confluence":
+        ingest_confluence()
+    elif ingest_type == "jira":
+        ingest_jira()
+    elif ingest_type == "all":
+        ingest_confluence()
+        ingest_jira()
+    else:
+        raise ValueError("Invalid ingestion type")
 
-        texts = text_splitter.split_documents(documents)
-
-        print(f"Loaded {len(documents)} documents and split into {len(texts)} chunks")
-
-        token_text_splitter = TokenTextSplitter(chunk_size=5000, chunk_overlap=0)
-
-        chunks = token_text_splitter.split_documents(texts)
-
-        vectorstore = Chroma.from_documents(
-            collection_name="confluence-docs",
-            documents=chunks,
-            embedding=OpenAIEmbeddings(model="text-embedding-ada-002"),
-            persist_directory=persist_dir)
-
-        print(f"Ingestion Complete! Embeddings stored in {persist_dir}")
-
-     
 if __name__ == "__main__":
     main()
-

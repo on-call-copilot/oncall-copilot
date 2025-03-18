@@ -235,7 +235,7 @@ class JsonIngester:
             logger.error(f"Error processing file {file_path}: {str(e)}")
             raise
 
-def main():
+def ingest_jira():
     """Main function to ingest JSON files."""
     ingester = JsonIngester()
     output_dir = "/Users/sawan/repos/oncall-copilot/outputs"
@@ -246,11 +246,11 @@ def main():
                 file_path = os.path.join(output_dir, filename)
                 ingester.ingest_file(file_path)
         
-        logger.info("Ingestion complete!")
+        logger.info("Jira Ingestion complete!")
         
     except Exception as e:
         logger.error(f"Error during ingestion: {str(e)}")
         raise
 
 if __name__ == "__main__":
-    main() 
+    ingest_jira() 
