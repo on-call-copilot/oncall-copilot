@@ -14,7 +14,7 @@ def main():
 
     load_dotenv()
     openai_api_key = os.getenv("OPENAI_API_KEY")
-    repo_path = "/Users/akshaykumarthakur/personal-projects/rippling-llm/confluence-docs"
+    repo_path = "/Users/jatinsh/Desktop/GitHub/oncall-copilot/confluence-docs-pdfs"
 
 
 
@@ -29,7 +29,7 @@ def main():
     chunks = text_splitter.split_documents(documents)
 
     # print(f"Loaded {len(documents)} documents and split into {len(chunks)} chunks")
-    # print(chunks[12])
+    print(chunks[0])
 
     vectorstore = Chroma.from_documents(
         documents=chunks,
@@ -44,7 +44,7 @@ def main():
     tools = [data_model_tool]
 
     jira_ticket_description = """
-    For an employee, the employee details were not communicated to the carrier. Please help debug this issue."""
+    The employee enrollment event was not triggered for an employee. Please help debug this issue."""
 
     agent = JiraTicketAgent(tools=tools, llm=llm)
     result = agent.analyze_ticket(jira_ticket_description)
