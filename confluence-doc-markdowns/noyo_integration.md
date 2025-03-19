@@ -35,7 +35,6 @@ we should be able to send transactions of this group to the carrier through Noyo
 added lines]. A group can potentially have different group ids for different carrier / carrier_group_id. And we save the information in
 **NoyoCompanyCarrier** objects.
 
-
 Group connection
 
 # Sign in to your Google Account
@@ -43,6 +42,7 @@ Group connection
 ```
 You must sign in to access this content
 ```
+
 ```
 Sign in
 ```
@@ -55,34 +55,24 @@ plan. [TODO: Adding new line for the first time] The mappings are modeled as **N
 Here are some of the most notable differences:
 
 1. A plan in Rippling is based on **RelationshipChoices** , i.e. SELF, SPOUSE, DOMESTIC_PARTNER. In contrast, a plan in Noyo is
-    based on eligible_member_types, and has finer granularity, e.g. ‘all’, ‘employee’, ‘child', ‘foster-child’, etc. The conversion from Rippling
-    to Noyo is basically a one-to-many mapping, except for ‘ **all** ’ in Noyo, which requires special handling. [Rarely, we have many to many
-    mappings.]
+   based on eligible_member_types, and has finer granularity, e.g. ‘all’, ‘employee’, ‘child', ‘foster-child’, etc. The conversion from Rippling
+   to Noyo is basically a one-to-many mapping, except for ‘ **all** ’ in Noyo, which requires special handling. [Rarely, we have many to many
+   mappings.]
 2. Typically, a Rippling plan can be converted to a Noyo plan, given the relationship type of the member [ _allowedRelationshipTypes_ in
-    Rippling plan has to honored still]. However, there are exceptions. Noyo sometimes further splits 1 plan in carrier to multiple plans of
-    theirs to express carrier classification based eligibility. e.g. For the same carrier plan, for ‘spouse’, there is one plan eligible for member
-    group 123, and another plan eligible for emember group 456 and 789. In this case, we have to use carrier classification information
-    [ **CarrierClassification** in Rippling model, /carrier_configurations in Noyo API] to uniquely convert a Rippling plan to a Noyo plan.
+   Rippling plan has to honored still]. However, there are exceptions. Noyo sometimes further splits 1 plan in carrier to multiple plans of
+   theirs to express carrier classification based eligibility. e.g. For the same carrier plan, for ‘spouse’, there is one plan eligible for member
+   group 123, and another plan eligible for emember group 456 and 789. In this case, we have to use carrier classification information
+   [ **CarrierClassification** in Rippling model, /carrier_configurations in Noyo API] to uniquely convert a Rippling plan to a Noyo plan.
 3. Each plan is of a line type. That is true for both Rippling and Noyo plans. However, some major distinctions exist for life & ADD plans.
-    a. In Rippling, life & ADD plans are always bound as one plan. In contrast, Noyo have separate plans for life and ADD.
-    b. Rippling distinguishes basic and voluntary life at line type level. However, both basic and voluntary life plans have the same line
-       type in Noyo, and the plan_type field is used to distinguish them.
-    c. For convenience, we map Rippling life & ADD plan to both life and ADD plans in Noyo. One problem for binding life & ADD together
-       is that allowed relationships can be different for life and ADD plans. Therefore, we introduced a field
-       **allowed_relationships_for_add** in Rippling life & ADD plan, which is used to determine if a ADD plan change should be included
-       in addition to life plan change when converting a transaction of a life & ADD plan in Rippling to a Noyo transaction.
-
+   a. In Rippling, life & ADD plans are always bound as one plan. In contrast, Noyo have separate plans for life and ADD.
+   b. Rippling distinguishes basic and voluntary life at line type level. However, both basic and voluntary life plans have the same line
+   type in Noyo, and the plan_type field is used to distinguish them.
+   c. For convenience, we map Rippling life & ADD plan to both life and ADD plans in Noyo. One problem for binding life & ADD together
+   is that allowed relationships can be different for life and ADD plans. Therefore, we introduced a field
+   **allowed_relationships_for_add** in Rippling life & ADD plan, which is used to determine if a ADD plan change should be included
+   in addition to life plan change when converting a transaction of a life & ADD plan in Rippling to a Noyo transaction.
 
 Plan Mapping
-
-# Sign in to your Google Account
-
-```
-You must sign in to access this content
-```
-```
-Sign in
-```
 
 ## Member mapping
 
@@ -107,20 +97,18 @@ A link to plan mapper can be found in the company debugger page. There are four 
 
 1. Map unmapped plans to Noyo plans. Most plan mapping issues should be able to be fixed here.
 2. Add mappings to already mapped plans. In case there were mistakes in existing mappings, e.g. a life & ADD plan is only mapped to life
-    plans in Noyo, a plan is only mapped to employee plans in Noyo, here is the place to make amendment.
+   plans in Noyo, a plan is only mapped to employee plans in Noyo, here is the place to make amendment.
 3. View/Delete existing mappings.
 4. Assign classification values to Noyo plans. As mentioned, when Noyo create multiple plans based on classification values, it is not
-    sufficient to simply map a Rippling plan to all those Noyo plans. Here, one can associate a classification value to multiple Noyo plans.
-    e.g. member group 123 is associated with dental plan 1 and vision plan C. Then, during a transaction, a member belongs to billing
-    group abc, and member group 123 is eligible for that plan mapping, whereas a member belongs to billing group abc, and member
-    group 456 is not.
-
+   sufficient to simply map a Rippling plan to all those Noyo plans. Here, one can associate a classification value to multiple Noyo plans.
+   e.g. member group 123 is associated with dental plan 1 and vision plan C. Then, during a transaction, a member belongs to billing
+   group abc, and member group 123 is eligible for that plan mapping, whereas a member belongs to billing group abc, and member
+   group 456 is not.
 
 # Task System
 
 For the scenarios where we cannot automate, we create tasks that are actionable by the Ops team. There are two types of tasks, one for
 setup, one for error detection.
-
 
 ## Setup Task
 
@@ -131,21 +119,21 @@ being exposed directly. Each is the parent task of a group of setup tasks, which
 are created daily by the job **check_for_noyo_transaction_prerequisites**.
 
 1. A GROUP_CONNECTION task is created when a NoyoCompanyCarrier object does not have a noyo group id and a group connection
-    has not been requested on it behalf. These can be handled in company debugger.
+   has not been requested on it behalf. These can be handled in company debugger.
 2. A PLAN_MAPPING task is created when a Rippling plan is not mapped to any Noyo plan [Thus there could be true negatives, e.g.
-    when a someone only mapped a plan to Noyo plans for employee, but not to plans for dependents]. These can be handled in the plan
-    mapper. NOTE: When a new line is added for the first time, it is possible that we don’t see any available Noyo plans for mapping
-    because the carrier has not finished installation or Noyo isn’t synced up with the carrier yet. In such cases, we should check
-    **ConfirmCompanyEnrollmentTask** first before we reach out to Noyo.
+   when a someone only mapped a plan to Noyo plans for employee, but not to plans for dependents]. These can be handled in the plan
+   mapper. NOTE: When a new line is added for the first time, it is possible that we don’t see any available Noyo plans for mapping
+   because the carrier has not finished installation or Noyo isn’t synced up with the carrier yet. In such cases, we should check
+   **ConfirmCompanyEnrollmentTask** first before we reach out to Noyo.
 3. A CARRIER_CONFIGURATION task is created when there are classification values from Noyo API [/carrier_configurations] that we
-    cannot find in our system [CarrierClassification]. These can handled by spoofing at the company, and adding missing values in
-    insurance settings.
+   cannot find in our system [CarrierClassification]. These can handled by spoofing at the company, and adding missing values in
+   insurance settings.
 4. A CONFIGURATION_ASSIGNMENT task is created when the assignment of classification values to Noyo plans is invalid. There are
-    two common cases:
-       a. A Rippling plan is mapped to multiple Noyo plans with the same (line, eligible member types), but the mappings don’t have any
-          assigned classification values to distinguish them.
-       b. A Rippling plan is mapped to multiple Noyo plans with the same (line, eligible member types), but there are conflicts in the
-          assignment, e.g. the same classification value exists at more than one mappings.
+   two common cases:
+   a. A Rippling plan is mapped to multiple Noyo plans with the same (line, eligible member types), but the mappings don’t have any
+   assigned classification values to distinguish them.
+   b. A Rippling plan is mapped to multiple Noyo plans with the same (line, eligible member types), but there are conflicts in the
+   assignment, e.g. the same classification value exists at more than one mappings.
 
 ## Error Task [TODO]
 
@@ -203,7 +191,6 @@ request group connection [i.e. already connected], do plan matching, or create s
 ingested daily in separate jobs directly i.e. creating NoyoCompanyCarrier, NoyoCompanyPlanInfo objects [ref.
 **ingestPeoGroupToVendors** ].
 
-
 # Resources
 
 https://dashboard.noyoconnect.com/login
@@ -211,7 +198,6 @@ https://dashboard.noyoconnect.com/login
 ```
 Noyo Group Benefits API
 ```
+
 Internal
 Noyo Connection Dashboard
-
-

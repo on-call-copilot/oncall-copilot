@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 import glob
+import json
 
 from langchain_text_splitters import MarkdownTextSplitter
 
@@ -34,23 +35,33 @@ def create_and_store_embeddings(chunks, collection_name="markdown_collection"):
         documents=chunks,
         embedding=embeddings,
         collection_name=collection_name,
-        persist_directory="/Users/akshaykumarthakur/personal-projects/rippling-llm/chroma_db"  # Specify where to store the database
+        persist_directory="chroma-confluence-doc-markdowns"  # Specify where to store the database
     )
     
     # Persist the database to disk
     vectordb.persist()
-    
     return vectordb
 
 # Main function to process a markdown file
 def process_markdown_and_create_db(collection_name="markdown_collection"):
-    markdown_file_path = "/Users/akshaykumarthakur/personal-projects/rippling-llm/confluence-doc-markdowns"
-    # Load
-    markdown_files = glob.glob(f"{markdown_file_path}/**/*.md", recursive=True)
+    # Load JSON file with markdown file mappings
+    with open("src/confluence_markdown_docs_json.json", "r") as f:
+        markdown_mappings = json.load(f)
+    
     all_documents = []
-    for file_path in markdown_files:
+    for page_id, page_info in markdown_mappings.items():
+        file_path = page_info["path"]
+        if not os.path.exists(file_path):
+            print(f"Warning: File not found: {file_path}")
+            continue
+            
         documents = load_markdown_file(file_path)
+        # Add metadata to each document
+        for doc in documents:
+            doc.metadata["page_id"] = page_info["pageId"]
+            doc.metadata["page_url"] = page_info["page_link"]
         all_documents.extend(documents)
+    
     # Split
     chunks = split_documents(all_documents)
     print(f"Split into {len(chunks)} chunks")
@@ -58,6 +69,12 @@ def process_markdown_and_create_db(collection_name="markdown_collection"):
     # Embed and store
     vectordb = create_and_store_embeddings(chunks, collection_name)
     print(f"Created Chroma DB with {vectordb._collection.count()} vectors")
+
+    retriever = vectordb.as_retriever(search_type="mmr", search_kwargs={"k": 10})
+
+    jira_ticket_description = "How to we onboard a group on Stedi in-house?"
+    docs = retriever.get_relevant_documents(jira_ticket_description)
+    print(docs)
     
     return vectordb
 
