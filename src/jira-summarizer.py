@@ -56,8 +56,7 @@ due to which the issue occurred and steps taken to resolve it:
         "steps_taken": "summary of steps taken to resolve the issue.",
         "data_models": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
     }}
-    
-    If no linked issues are found, return an empty list.
+Always return the final json string and do not return response in markdown format.
 """
 
 # Initialize the OpenAI client
