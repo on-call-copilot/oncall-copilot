@@ -1,8 +1,11 @@
 import json
 import os
+import dotenv
 from openai import OpenAI
 import time
 from typing import Dict, List, Any
+
+from query_markdown import get_similar_markdown_docs
 
 
 # Define system prompt as a separate variable
@@ -60,6 +63,7 @@ Always return the final json string and do not return response in markdown forma
 """
 
 # Initialize the OpenAI client
+dotenv.load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def read_markdown_file(file_path: str) -> str:
@@ -90,12 +94,20 @@ def read_jira_data(file_path: str) -> List[Dict[str, Any]]:
         return []
 
 def create_prompt_for_ticket(ticket: Dict[str, Any]) -> str:
+
+    documents = get_similar_markdown_docs(ticket["description"])
+
+
     """Create a prompt for OpenAI based on the ticket data."""
     prompt = f"""
     Analyze the following Jira ticket:
-    
     Jira Ticket:
     {json.dumps(ticket, indent=2)}
+
+    while you have access to these documents that might be relevant to the ticket:
+    {documents}
+
+
     """
     return prompt
 
@@ -124,7 +136,7 @@ def process_ticket_with_openai(ticket: Dict[str, Any], failed_tickets: List[str]
     try:
         # Call OpenAI API
         response = client.chat.completions.create(
-            model="gpt-4o",  # You can adjust the model as needed
+            model="gpt-4-turbo",  # You can adjust the model as needed
             messages=[
                 {"role": "system", "content": get_system_prompt()},
                 {"role": "user", "content": prompt}
@@ -189,9 +201,9 @@ def main():
     """Main function to process all tickets."""
     
     # File paths
-    input_file = "jira-exports/jira-beninteg-data-dump.json"
-    output_file = "outputs/jira-summary_v2_4o.json"
-    responses_file = "outputs/openai-responses-jira.txt"
+    input_file = "jira-exports/selected_tickets.json"
+    output_file = "outputs/jira-summary_4o_turbo_selected_tickets.json"
+    responses_file = "outputs/openai-responses-jira-selected-tickets.txt"
     
     # Initialize the failed_tickets list
     failed_tickets = []
