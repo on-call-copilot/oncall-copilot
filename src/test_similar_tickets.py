@@ -1,4 +1,5 @@
 import chromadb
+import dotenv
 import openai
 import os
 import logging
@@ -51,8 +52,29 @@ def find_similar_tickets(query: str, collection_name: str = "issue-summary", n_r
         logger.info(f"Content: {doc[:200]}...")  # Show first 200 chars
         logger.info("-" * 80)
 
+    return results
+
+def get_similar_tickets(query: str):
+    summary_results = find_similar_tickets(query, "issue-summary")
+    
+    issue_results = find_similar_tickets(query, "issue")
+
+    summaries = summary_results['documents'][0]
+    issues = issue_results['documents'][0]
+
+    result = ""
+    for summary in summaries:
+        result += f"{summary}\n"
+    for issue in issues:
+        result += f"{issue}\n"
+
+    print(result)
+    return result
+    
+
 if __name__ == "__main__":
     # Ensure OpenAI API key is set
+    dotenv.load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         logger.error("Please set the OPENAI_API_KEY environment variable")
         exit(1)
@@ -91,8 +113,5 @@ if __name__ == "__main__":
     ]
     
     for query in test_queries:
-        # Test with summary collection
-        find_similar_tickets(query, "issue-summary")
-        
-        # Test with full issue collection
-        find_similar_tickets(query, "issue")
+        get_similar_tickets(query)
+
