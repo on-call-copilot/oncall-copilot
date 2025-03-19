@@ -19,7 +19,7 @@ def get_similar_markdown_docs(jira_ticket_description: str, k: int = 20):
         create_collection_if_not_exists=False
     )
 
-    retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": k, "fetch_k": 100})
+    retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": k, "fetch_k": 90})
 
     docs = retriever.get_relevant_documents(jira_ticket_description)
 

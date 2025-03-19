@@ -1,11 +1,28 @@
 import chromadb
+import dotenv
 import openai
 import os
 import logging
+import ast
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def merge_lists(l1: list, l2: list) -> list:
+    # Create a dictionary to store the highest value for each key
+    merged_dict = {x['key']: x for x in l1}
+    
+    # Process second list, keeping higher values
+    for x in l2:
+        if x['key'] in merged_dict:
+            # Keep the higher value
+            merged_dict[x['key']] = max(merged_dict[x['key']]['similarity'], x['similarity'])
+        else:
+            merged_dict[x['key']] = x
+    
+    return list(merged_dict.values())
+
 
 def get_embedding(text: str) -> list:
     """Get embedding using OpenAI's text-embedding-3-large model."""
@@ -40,19 +57,32 @@ def find_similar_tickets(query: str, collection_name: str = "issue-summary", n_r
     )
     
     # Print results
-    logger.info(f"\nSimilar tickets for query: '{query}'")
     logger.info(f"Searching in collection: {collection_name}")
     logger.info("-" * 80)
+
+    result = []
     
     for i, (doc, metadata, distance) in enumerate(zip(results['documents'][0], results['metadatas'][0], results['distances'][0])):
         logger.info(f"\nResult {i+1}:")
         logger.info(f"Ticket Key: {metadata['key']}")
         logger.info(f"Similarity Score: {1 - distance:.4f}")  # Convert distance to similarity
-        logger.info(f"Content: {doc[:200]}...")  # Show first 200 chars
+        logger.info(f"Content: {doc}")  # Show first 200 chars
         logger.info("-" * 80)
+
+        result.append({
+            **ast.literal_eval(doc),
+            'similarity': (1 - distance)
+        })
+
+    return result
+
+def get_similar_tickets(query: str):
+    results_new = [find_similar_tickets(query, collection) for collection in ["issue-summary", "issue"]]
+    return merge_lists(*results_new)
 
 if __name__ == "__main__":
     # Ensure OpenAI API key is set
+    dotenv.load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         logger.error("Please set the OPENAI_API_KEY environment variable")
         exit(1)
@@ -87,12 +117,15 @@ if __name__ == "__main__":
     '''
 
     test_queries = [
-        query
+        query,
     ]
     
     for query in test_queries:
-        # Test with summary collection
-        find_similar_tickets(query, "issue-summary")
-        
-        # Test with full issue collection
-        find_similar_tickets(query, "issue")
+
+        logger.info(f"\nSimilar tickets for query: '{query}'")
+        # Test with issue summary collection
+
+        results = [find_similar_tickets(query, collection) for collection in ["issue-summary", "issue"]]
+
+        print(merge_lists(*results))
+

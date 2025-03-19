@@ -4,4 +4,4 @@ local_outputs/
 *.pyc
 .env
 logs.txt
-
+*.sqlite3

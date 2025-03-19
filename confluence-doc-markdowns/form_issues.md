@@ -1,5 +1,14 @@
 # Form issues
 
+Rippling form ops team maps our insurance PDF form fields. The form ops team posts the mapped forms on Box and we copy over newly posted/updated forms from Box to our S3 bucket. Unfortunately, these forms uploaded by form ops may have issues. As a result, incorrect insurance forms slip into our system and cause many issues. For example, one form issue caused customers to be charged incorrectly. This was not discovered for months and resulted in monetary loss for our business. In another case, dependents were left insured, which caused bad customer experience and damaged Rippling's reputation. 
+
+
+To address this issue, we built the form approval tool, which detects the form updates from Box, fill out the form with mock user data and presents each form on the dashboard as a review request for stakeholders to review. 
+
+Also ensure that form files in box are named correctly for the event type and the information they are supposed to transmit to the carrier.
+
+The reviewers are expected to review the forms on the dashboard, approve the correct forms, reject incorrect forms and report forms issues/request changes to the relevant stakeholders(insurance eng team, etc) as needed.
+
 ## When to file a Jira for a form issue?
 
 ```
@@ -31,3 +40,4 @@ field details in EE debugger are incorrect, that would require a JIRA for Eng.
 ```
 SUMMARY: If the issue revolves around missing fields, old forms, or missing forms it will require an Ops request.
 ```
+

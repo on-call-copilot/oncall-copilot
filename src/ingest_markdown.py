@@ -1,4 +1,5 @@
 import os
+import dotenv
 from langchain.document_loaders import UnstructuredMarkdownLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
@@ -74,4 +75,5 @@ def process_markdown_and_create_db(collection_name="markdown_collection"):
 
 # Example usage
 if __name__ == "__main__":
+    dotenv.load_dotenv()
     db = process_markdown_and_create_db()
