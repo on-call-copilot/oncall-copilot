@@ -69,12 +69,6 @@ def process_markdown_and_create_db(collection_name="markdown_collection"):
     # Embed and store
     vectordb = create_and_store_embeddings(chunks, collection_name)
     print(f"Created Chroma DB with {vectordb._collection.count()} vectors")
-
-    retriever = vectordb.as_retriever(search_type="mmr", search_kwargs={"k": 10})
-
-    jira_ticket_description = "How to we onboard a group on Stedi in-house?"
-    docs = retriever.get_relevant_documents(jira_ticket_description)
-    print(docs)
     
     return vectordb
 
