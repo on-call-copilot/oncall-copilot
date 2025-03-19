@@ -1,0 +1,50 @@
+{
+  "BENINTEG-4108": {
+    "key": "BENINTEG-4108",
+    "issue": "The Noyo transaction for Delfino AI, Inc was blocked due to an error indicating that there was no matching Noyo plan mapping information, despite the plan being mapped correctly in the system.",
+    "issue_summary": "The transaction was blocked because the Noyo system did not have the 'Employee Only' version of the plan on file, which led to a mismatch in plan mapping.",
+    "rca": "The root cause of the issue was that the Noyo system only had a plan for 'Employee with Dependent', but the employee in question had no dependents. This resulted in a missing plan for the 'Employee Only' tier in Noyo.",
+    "steps_taken": "The affected plan was unmapped and remapped in the Noyo Plan Mapper, and the transaction was retried. It was identified that the Noyo system lacked the 'Employee Only' version of the plan, and further troubleshooting with Noyo was planned.",
+    "data_models": "[PendingAction, InsuranceCompanyPlanInfo]"
+  },
+  "BENINTEG-4092": {
+    "key": "BENINTEG-4092",
+    "issue": "RevenueCat, Inc. faced a dental plan mapping error that blocked Noyo amendments, preventing the transmission of Anthem coverage termination information for several employees.",
+    "issue_summary": "The issue was caused by a dental plan mapping error in the Noyo system, which blocked amendments and prevented the processing of Anthem coverage terminations, potentially leading to additional premium payments.",
+    "rca": "Ops was able to self-serve and resolve the issue after filing the ticket. The root cause was identified as incorrect configuration assignments.",
+    "steps_taken": "Verified that Noyo dental plans are mapped to a Rippling dental plan. Attempted to submit amendments via the census retool and Noyo Amendment page in EE debugger, but received error messages. The issue was resolved by correcting the configuration assignments.",
+    "data_models": "No specific data models were mentioned in the ticket."
+  },
+  "BENINTEG-4066": {
+    "key": "BENINTEG-4066",
+    "issue": "Employee Taylor Oesterle is not able to send medical enrollment due to an error related to Noyo plan mapping.",
+    "issue_summary": "The issue is that employee Taylor Oesterle is unable to send medical enrollment because of an error indicating that there is no matching Noyo plan mapping information for the specified Rippling plan. This issue is unique to this employee.",
+    "rca": "The root cause of the issue was identified as an incorrect plan mapping where a discontinued plan was mapped in the Noyo system. This manual data entry error led to the failure in sending the medical enrollment for the employee.",
+    "steps_taken": "The issue was resolved by deleting the mapping of the discontinued plan in the Noyo system. Once this incorrect mapping was removed, the problem was resolved, and the employee's medical enrollment could be processed without any further issues.",
+    "data_models": "No specific data models were mentioned in the ticket or comments."
+  },
+  "BENINTEG-3997": {
+    "key": "BENINTEG-3997",
+    "issue": "Hearts and Hands Therapy Services had incorrect plan mapping for dental plans, causing no member snapshots to be submitted properly.",
+    "issue_summary": "The issue was due to incorrect plan mapping in Noyo, where the same classification of bill group was added across mapping, leading to errors in member snapshot submissions.",
+    "rca": "The root cause was identified as the same classification of bill group being added across the mapping, which was not valid for the group and was present in both carrier classification values for employees and in Noyo plan mapping.",
+    "steps_taken": "1. Fixed company rules by adding billing group 10001 to employees' carrier configuration.\n2. Removed billing group from NoyoPlan mapping to avoid common classification values that do not help in disambiguating plan mapping.\n3. Resent Noyo snapshots for the company.\n4. Verified and confirmed that the bill group 10001 was correct and removed bill mapping from mapped configurations.\n5. Removed bill group from employee classification values to ensure no common values across all employees/plans.",
+    "data_models": "[NoyoPlan, CompanyCarrierLineInfo]"
+  },
+  "BENINTEG-3613": {
+    "key": "BENINTEG-3613",
+    "issue": "The issue involves a mapping problem with Noyo for the Anthem plan, where new hire enrollments (NHE) are not being sent to Noyo, and manual amendments to push enrollments result in an error.",
+    "issue_summary": "The problem is a mapping issue with Noyo for the Anthem plan, where new hire enrollments are not being sent due to a mismatch in plan mapping information.",
+    "rca": "The root cause of the issue is that there are two plans on Noyo's end with 'noyo_eligible_member_types' set to 'all', making it impossible to distinguish between them. Additionally, one of the plans is discontinued, and discontinued plans are not shown in NPM.",
+    "steps_taken": "The steps taken to resolve the issue included confirming with Noyo about the eligible member types, deleting the mapping for the discontinued plan, and recreating the mappings. The following code snippet was used to delete the discontinued plan mapping: `return NoyoCompanyPlanInfo.objects.filter(company_plan_info=\"670d62f711546c06c4c69b8d\", id=\"671b4fe2f804eeade0dfe0d2\").delete()`.",
+    "data_models": "[NoyoCompanyPlanInfo]"
+  },
+  "BENINTEG-2456": {
+    "key": "BENINTEG-2456",
+    "issue": "Noyo Setup Tasks not clearing from Insurance Tasks Dashboard for Transcend Privacy Inc.",
+    "issue_summary": "Noyo Setup Tasks were not clearing from the Insurance Tasks Dashboard due to incorrect mapping of billing groups to multiple Noyo plans, causing overlapping plan mappings.",
+    "rca": "A billing group was mapped incorrectly to multiple plans, causing overlapping Noyo plans to be mapped to Rippling plans. Additionally, there were discontinued plans at Noyo's side that were still mapped with Rippling, conflicting with new Noyo plans. These were cleared from the system, and the tasks did not reopen.",
+    "steps_taken": "The issue was resolved by identifying and removing mappings for discontinued Noyo plans. The following code snippet was used to identify and delete these mappings:\n\n```python\ndced_plans = [x for x in NoyoAPI.get_group_plans(\"c1076e50-8801-470f-a078-9899fc9422ca\") if x[\"status\"] == \"discontinued\"]\nfor dced_plan in dced_plans:\n    print(\"Deleting mappings for discontinued plan\", dced_plan[\"id\"])\n    ncpis = NoyoCompanyPlanInfo.objects.filter(company=company, noyo_plan_id=dced_plan[\"id\"])\n    print(\" Found\", len(ncpis), \"NoyoCompanyPlanInfos\")\n    print(\"  IDs\", [str(x.id) for x in ncpis])\n    print(\"Lines\", [str(x.noyo_line_type) for x in ncpis])\n    if False:\n        ncpis.delete()\nreturn None\n```\n\nAdditionally, the affected Noyo plans were unmapped from billing group '0000', and the tasks were marked as resolved. The process was verified by re-triggering the check for Noyo transaction prerequisites, which executed successfully without reopening the tasks.",
+    "data_models": "[NoyoCompanyPlanInfo, InsuranceCompanyInfo]"
+  }
+}

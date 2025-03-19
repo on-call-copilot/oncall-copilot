@@ -10,7 +10,6 @@ def get_system_prompt() -> str:
     """Get the system prompt with insurance basics overview."""
     insurance_basics = read_markdown_file("confluence-doc-markdowns/insurance_basics_overview.md")
     insurance_models = read_markdown_file("confluence-doc-markdowns/insurance_models_overview.md")
-    vericred_integration = read_markdown_file("confluence-doc-markdowns/vericred_integration.md")
     jira_ticket_format = read_markdown_file("jira-ticket-format.json")
 
     return f"""
@@ -34,9 +33,6 @@ Insurance basics overview:
 Insurance models overview:
 {insurance_models}
 
-Vericred integration:
-{vericred_integration}
-
 You are also an expert at analyzing Jira tickets and extracting key information. 
 
 The Jira tickets follow this JSON format:
@@ -45,27 +41,27 @@ The Jira tickets follow this JSON format:
 Pay special attention to the description, comments, and RCA fields as they often contain the most relevant information about the issue.
 
 Analyze the Jira ticket given by user, read all the content, description, comments, etc. and understand the issue user was facing and the detailed reason 
-due to which the issue occured:
-    1. A concise summary of the issue(problem faced and the reason due to which the issue occurred don't include the solution)
-    2. A list of linked issues mentioned in the content
-    
-    For linked issues, look for:
-    - Issue IDs in the format of PROJECT-NUMBER (e.g. BENINTEG-4373, BENPNP-123, BENEX-456)
-    - URLs of format https://rippling.atlassian.net that contain issue IDs like https://rippling.atlassian.net/browse/BENINTEG-2529
-    - Extract only the issue ID (e.g. BENINTEG-2529) from these URLs
-    - Common project prefixes include BENINTEG, BENPNP, BENEX, but there may be others
-    
+due to which the issue occurred and steps taken to resolve it:
+    1. issue: A concise summary of the issue being faced(problem faced in ticket and blockers happening due to it, don't include the reason found during investigation on what caused it)
+    2. issue_summary: A concise summary of the issue(summary of problem problem faced in ticket and top level reason due to which the issue occurred don't include the solution)
+    3. rca: A detailed summary of the reason found during investigation on what caused the issue
+    4. steps_taken: summary of steps taken to resolve the issue. include code snippets used to debug and fix they are available in the data. use markdown for code snippets.
+    5. Data Models: A list of data models names used to debug and fix the issue. this would be mostly available in code snippets.
+    Output only the json object as string and not in markdown format.
     Format your response exactly as follows:
-    ```json
-        "summary": "Your summary of the ticket issue here",
-        "linked_issues": ["BENINTEG-123", "BENPNP-456", ...]
-    ```
+    {{
+        "issue": "Issue being faced in ticket", 
+        "issue_summary": "Your summary of the ticket issue here",
+        "rca": "A detailed summary of the reason found during investigation on what caused the issue",
+        "steps_taken": "summary of steps taken to resolve the issue.",
+        "data_models": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
+    }}
     
     If no linked issues are found, return an empty list.
 """
 
 # Initialize the OpenAI client
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def read_markdown_file(file_path: str) -> str:
     """
@@ -104,64 +100,109 @@ def create_prompt_for_ticket(ticket: Dict[str, Any]) -> str:
     """
     return prompt
 
-def process_ticket_with_openai(ticket: Dict[str, Any]) -> Dict[str, Any]:
+def write_openai_response_to_file(ticket_key: str, content: str, output_file: str):
+    """
+    Write OpenAI response content to a file with the specified format.
+    
+    Args:
+        ticket_key (str): The Jira ticket key
+        content (str): The raw content from OpenAI
+        output_file (str): The file to write to
+    """
+    try:
+        with open(output_file, 'a', encoding='utf-8') as file:
+            file.write(f"KEY: {ticket_key}\n")
+            file.write(f"{content}\n\n\n")
+        print(f"Successfully wrote OpenAI response for {ticket_key} to {output_file}")
+    except Exception as e:
+        print(f"Error writing OpenAI response to file: {e}")
+
+def process_ticket_with_openai(ticket: Dict[str, Any], failed_tickets: List[str], responses_file: str) -> Dict[str, Any]:
     """Process a ticket with OpenAI to get summary and linked issues."""
     prompt = create_prompt_for_ticket(ticket)
+    ticket_key = ticket.get("key", "Unknown")
     
     try:
         # Call OpenAI API
         response = client.chat.completions.create(
-            model="gpt-4-turbo",  # You can adjust the model as needed
+            model="gpt-4o",  # You can adjust the model as needed
             messages=[
                 {"role": "system", "content": get_system_prompt()},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.1,
+            temperature=0,
         )
         
         # Extract and parse the response
         content = response.choices[0].message.content.strip()
-        print(f"Processing ticket {ticket.get('key', 'Unknown')}")
-        print(content)
+        print(f"Processing ticket {ticket_key}")
+        print(content) # Print part of the raw response for debugging
+        
+        # Write the raw response to the file
+        write_openai_response_to_file(ticket_key, content, responses_file)
+        
         try:
             # Find JSON in the content
-            start_index = content.find('{')
-            end_index = content.rfind('}') + 1
-            if start_index == -1 or end_index == 0:
-                raise ValueError("No JSON found in the response")
-                
-            json_content = content[start_index:end_index]
-            result = json.loads(json_content)
+            # start_index = content.find('{')
+            # end_index = content.rfind('}') + 1
+            # if start_index == -1 or end_index == 0:
+            #     print(f"WARNING: No JSON found in the response for ticket {ticket_key}")
+            #     raise ValueError("No JSON found in the response")
+                            
+            result = json.loads(content)
+            print(f"Successfully parsed JSON for ticket {ticket_key}")
             
             return {
-                "key": ticket.get("key", "Unknown"),
-                "summary": result.get("summary", "No summary available"),
-                "linked_issues": result.get("linked_issues", [])
+                "key": ticket_key,
+                "issue": result.get("issue", "No issue available"),
+                "issue_summary": result.get("issue_summary", "No issue summary available"),
+                "rca": result.get("rca", "No RCA available"),
+                "steps_taken": result.get("steps_taken", "No steps taken information available"),
+                "data_models": result.get("data_models", "No data models information available")
             }
             
         except json.JSONDecodeError as e:
-            print(f"Error parsing OpenAI response for ticket {ticket.get('key', 'Unknown')}: {e}")
+            print(f"Error parsing OpenAI response for ticket {ticket_key}: {e}")
             print(f"Response: {content}")
+            failed_tickets.append(ticket_key)
             return {
-                "key": ticket.get("key", "Unknown"),
-                "summary": "Error parsing response",
-                "linked_issues": []
+                "key": ticket_key,
+                "issue": "Error parsing response",
+                "issue_summary": "Error parsing response",
+                "rca": "Error parsing response",
+                "steps_taken": "Error parsing response",
+                "data_models": "Error parsing response"
             }
             
     except Exception as e:
-        print(f"Error calling OpenAI API for ticket {ticket.get('key', 'Unknown')}: {e}")
+        print(f"Error calling OpenAI API for ticket {ticket_key}: {e}")
+        failed_tickets.append(ticket_key)
         return {
-            "key": ticket.get("key", "Unknown"),
-            "summary": f"Error: {str(e)}",
-            "linked_issues": []
+            "key": ticket_key,
+            "issue": f"Error: {str(e)}",
+            "issue_summary": f"Error: {str(e)}",
+            "rca": f"Error: {str(e)}",
+            "steps_taken": f"Error: {str(e)}",
+            "data_models": f"Error: {str(e)}"
         }
 
 def main():
     """Main function to process all tickets."""
     
     # File paths
-    input_file = "jira-beninteg-data-dump.json"
-    output_file = "jira-summary.json"
+    input_file = "jira-exports/jira-beninteg-data-dump.json"
+    output_file = "outputs/jira-summary_v2_4o.json"
+    responses_file = "outputs/openai-responses-jira.txt"
+    
+    # Initialize the failed_tickets list
+    failed_tickets = []
+    
+    # Clear the responses file if it exists
+    try:
+        with open(responses_file, 'w', encoding='utf-8') as file:
+            file.write("# OpenAI Responses for Jira Tickets\n\n")
+    except Exception as e:
+        print(f"Error initializing responses file: {e}")
     
     # Read Jira data
     print(f"Reading Jira data from {input_file}...")
@@ -174,18 +215,17 @@ def main():
         ticket_key = ticket.get("key", f"Unknown-{i}")
         print(f"Processing {i+1}/{len(tickets)}: {ticket_key}")
         
-        result = process_ticket_with_openai(ticket)
+        result = process_ticket_with_openai(ticket, failed_tickets, responses_file)
         
-        # Only include linked_issues if non-empty
-        result_dict = {
+        # Add result to results dictionary
+        results[ticket_key] = {
             "key": ticket_key,
-            "summary": result["summary"]
+            "issue": result["issue"],
+            "issue_summary": result["issue_summary"],
+            "rca": result["rca"],
+            "steps_taken": result["steps_taken"],
+            "data_models": result["data_models"]
         }
-        
-        if result["linked_issues"]:
-            result_dict["linked_issues"] = result["linked_issues"]
-            
-        results[ticket_key] = result_dict
         
         # Write intermediate results to file after every 20 tickets
         if (i + 1) % 20 == 0:
@@ -196,10 +236,28 @@ def main():
                 print(f"Successfully wrote intermediate results to {output_file}")
             except Exception as e:
                 print(f"Error writing intermediate results to output file: {e}")
+            
+            time.sleep(2)
         
-        # Add some delay to avoid rate limits
-        if i < len(tickets) - 1:
-            time.sleep(1)
+        
+    
+    # Print list of keys that had issues
+    if failed_tickets:
+        print("\nThe following tickets had issues during analysis:")
+        for key in failed_tickets:
+            print(f"- {key}")
+        
+        # Also write failed tickets to a file
+        try:
+            with open("outputs/failed_tickets.txt", 'w', encoding='utf-8') as file:
+                file.write("# Failed Tickets\n\n")
+                for key in failed_tickets:
+                    file.write(f"{key}\n")
+            print("List of failed tickets written to failed_tickets.txt")
+        except Exception as e:
+            print(f"Error writing failed tickets to file: {e}")
+    else:
+        print("\nAll tickets were processed successfully!")
     
     # Write final results to file
     try:
@@ -211,5 +269,4 @@ def main():
         print(f"Error writing to output file: {e}")
 
 if __name__ == "__main__":
-    # main()
-    print(get_system_prompt())
+    main()
