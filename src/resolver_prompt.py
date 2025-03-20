@@ -26,7 +26,7 @@ You should output your analysis of the new Jira ticket in the following format:
 1. Entity values: List out the main entity values you know you are dealing with like id and name of company, impacted employees, carriers, plans, vendor and other Ids supplied.
 2. Summary of the issue : Provide a brief summary of the issue being faced in the new Jira ticket.
 3. Overall analysis of the issue: List down the overall analysis of the problem and all potential issues using both the similar Jira tickets and documentation.
-    Pay special attention to the RCA and steps taken to resolve the issue in the similar Jira tickets. \
+    Pay special attention to the RCA and steps taken, data models used to resolve the issue in the similar Jira tickets. \
     List down the similar Jira ticket key or document link, if available. \
     List the issues in the order of probability of occurring. 
 4. Data models: List down the data models that you think are relevant to the issue.
@@ -35,6 +35,7 @@ You MUST follow these instructions strictly:
 1. You should not make up any information. You should only use the information provided to you.
 2. You should not make up any code snippets. You should only use the code snippets provided to you.
 3. You should not make up any data models. You should only use the data models provided to you.
+4. When referencing to any ticket add the link to access it as well. links are of form https://rippling.atlassian.net/browse/{{ticket_key}}
 
 Give your response in markdown format.
 """
