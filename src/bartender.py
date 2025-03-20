@@ -10,7 +10,7 @@ from test_similar_tickets import get_similar_tickets
 def main():
     new_ticket_details = input("Enter the details of the ticket troubling you:")
     other_docs = get_similar_markdown_docs(new_ticket_details, 3)
-    similar_ticket_details = get_similar_tickets(new_ticket_details)
+    similar_ticket_details = get_similar_tickets(new_ticket_details, similarity_threshold = 0.6)
     ticket_string = ""
     for ticket in similar_ticket_details:
         ticket_string += f"Ticket Key: {ticket['key']}\n Issue: {ticket['issue']}\n Summary: {ticket['issue_summary']}\n RCA: {ticket['rca']}\n Steps: {ticket['steps_taken']}\n Data Models Used: {ticket['data_models']}\n\n"
