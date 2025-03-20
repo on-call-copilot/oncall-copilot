@@ -50,6 +50,18 @@ def get_total_employee_count_for_submission(enrollment_event_id: str, company_id
     path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_total_employee_count_for_submission"
     return rippling_api_handler(path, company_id=company_id, role_id=role_id)
 
+def get_selected_eligibility_cclis_for_company_event(company_enrollment_event_id: str, company_id: str, role_id: str):
+    """Get selected eligibility cclis for a given company event."""
+    path = f"/api/insurance/api/eligibility_company_carrier_line_info/get_selected_eligibility_cclis_for_company_event?companyEnrollmentEventId={company_enrollment_event_id}"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
+
+def get_total_employee_count_for_submission(company_enrollment_event_id: str, company_id: str, role_id: str):
+    """Get total employee count for submission for a given company event."""
+    path = f"/api/insurance/api/company_enrollment_event/{company_enrollment_event_id}/get_total_employee_count_for_submission"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
+
+
+
 print("\nTesting get_all_carriers_that_require_packets:")
 print(get_all_carriers_that_require_packets(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
