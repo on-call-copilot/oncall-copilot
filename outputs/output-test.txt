@@ -1,0 +1,137 @@
+Enter the details of the ticket troubling you:
+Hi Jarvis,
+Can you help me with analysis of the following issue:
+
+## New Jira Ticket: 
+Context: This group has a new carrier connection with Beam in Noyo, all connection information matches between rippling and noyo, plans are mapped, and no additional plans are available to map. 
+
+-------------------------------------------
+
+## Similar Jira Tickets
+The similar Jira tickets are in the following format:
+
+{
+    "Issue": "Issue being faced in ticket", 
+    "Summary": "Summary of the ticket issue.",
+    "RCA": "A detailed summary of the reason found during investigation on what caused the issue",
+    "Steps": "summary of steps taken to resolve the issue.",
+    "Data Models Used": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
+}
+
+Ticket Key: BENINTEG-3813
+ Issue: There are 66 blocked Noyo transactions with the carrier Beam due to an error message indicating that the Noyo plan mapping information is missing for the Rippling plan: Beam Dental PPO (Base), line type: dental.
+ Summary: Blocked Noyo transactions with Beam due to missing Noyo plan mapping information for the Beam Dental PPO (Base) plan.
+ RCA: The root cause of the issue was that the check mark for 'Include Older Plans' was not selected in the Noyo plan mapping, which is necessary for older plans.
+ Steps: The troubleshooting steps included ensuring the customer carrier object was enabled for the Noyo API and confirming the plan was mapped correctly in the Noyo plan mapper. The resolution involved selecting the 'Include Older Plans' checkbox in the Noyo plan mapping, which allowed the plan info to appear and the transactions to proceed.
+ Data Models Used: [NoyoCompanyPlanInfo]
+
+Ticket Key: BENINTEG-812
+ Issue: Admin sees the Noyo connection as still being in setup on their carrier connections tab of the Rippling dashboard, despite the connection being set up.
+ Summary: The admin's dashboard does not reflect the finalized file feed status for the Noyo connection, even though the carrier connections team sees it as set up.
+ RCA: The issue was categorized as 'Deferred' and described as 'No longer an issue', indicating that the problem resolved itself or was not reproducible.
+ Steps: The issue was monitored, and it was noted that the banner indicating the setup was gone upon rechecking. No further action was deemed necessary.
+ Data Models Used: []
+
+Ticket Key: BENINTEG-1201
+ Issue: The group is in the process of setting up a file feed with Beam, and email communication should be used to send enrollment forms in the meantime. However, dual communication details are not set up, and the employee's enrollment forms have not been processed.
+ Summary: Carrier dual communication not enabled for Beam, causing enrollment forms not to be processed as the connection with Noyo is pending.
+ RCA: The system does not have dual communication enabled for Beam, and specifically, Beam does not support email/fax fallback when Noyo is on. The group connection setup task for this company-carrier is in a pending state, preventing the setup of a group connection and the sending of forms.
+ Steps: The group was informed that they need to manage their enrollments outside of Rippling until the feed is live, as there is no fallback to forms in this scenario. The team is looking into supporting dual communications for Noyo to address this issue in the future.
+ Data Models Used: []
+
+Ticket Key: BENINTEG-3927
+ Issue: Noyo UHC group unable to send snapshots due to an error after updating mappings for new plans from UHC.
+ Summary: The Noyo UHC group faced an issue where they were unable to send snapshots after updating mappings for new plans from UHC. The problem was due to both old and new Noyo plans being mapped to new Rippling plans.
+ RCA: The root cause of the issue was that both old and new Noyo plans were mapped to new Rippling plans, which caused a conflict in the classification values for the same company_plan_info.
+ Steps: The issue was resolved by ensuring that classification values are only added when they differentiate between plans. The comment provided a reference to the Noyo Plan Mapping configuration assignment for guidance.
+ Data Models Used: [CompanyInsuranceInfo]
+
+
+-------------------------------------------
+
+## Documentation
+you would want to check these documents for more information:
+## Plan Mapping  
+Noyo represents plans differently from Rippling. Therefore, a transaction of a Rippling plan need to be converted to a transaction of a noyo
+plan. [TODO: Adding new line for the first time] The mappings are modeled as **NoyoCompanyPlanInfo** objects.  
+Here are some of the most notable differences:  
+1. A plan in Rippling is based on **RelationshipChoices** , i.e. SELF, SPOUSE, DOMESTIC_PARTNER. In contrast, a plan in Noyo is
+based on eligible_member_types, and has finer granularity, e.g. ‘all’, ‘employee’, ‘child', ‘foster-child’, etc. The conversion from Rippling
+to Noyo is basically a one-to-many mapping, except for ‘ **all** ’ in Noyo, which requires special handling. [Rarely, we have many to many
+mappings.]
+2. Typically, a Rippling plan can be converted to a Noyo plan, given the relationship type of the member [ _allowedRelationshipTypes_ in
+Rippling plan has to honored still]. However, there are exceptions. Noyo sometimes further splits 1 plan in carrier to multiple plans of
+theirs to express carrier classification based eligibility. e.g. For the same carrier plan, for ‘spouse’, there is one plan eligible for member
+group 123, and another plan eligible for emember group 456 and 789. In this case, we have to use carrier classification information
+[ **CarrierClassification** in Rippling model, /carrier_configurations in Noyo API] to uniquely convert a Rippling plan to a Noyo plan.
+3. Each plan is of a line type. That is true for both Rippling and Noyo plans. However, some major distinctions exist for life & ADD plans.
+a. In Rippling, life & ADD plans are always bound as one plan. In contrast, Noyo have separate plans for life and ADD.
+b. Rippling distinguishes basic and voluntary life at line type level. However, both basic and voluntary life plans have the same line
+type in Noyo, and the plan_type field is used to distinguish them.
+c. For convenience, we map Rippling life & ADD plan to both life and ADD plans in Noyo. One problem for binding life & ADD together
+is that allowed relationships can be different for life and ADD plans. Therefore, we introduced a field
+**allowed_relationships_for_add** in Rippling life & ADD plan, which is used to determine if a ADD plan change should be included
+in addition to life plan change when converting a transaction of a life & ADD plan in Rippling to a Noyo transaction.  
+Plan Mapping
+
+# Document Link: https://rippling.atlassian.net/wiki/x/ZIHHo
+
+
+
+## Company debugger  
+Here, we can see an overview of live group connections/assigned group ids. We can also request group connections by
+carrier/carrier_group_id. For requested group connections, there is also information like status e.g. “noyo review” and relevant dates
+information.
+
+# Document Link: https://rippling.atlassian.net/wiki/x/ZIHHo
+
+
+
+## Unsubmittable Forms  
+Some actions are never submitted to carriers. These include actions that do not generate forms, such as offline changes, and actions with
+only waiver forms. We also do not send forms if a company is no longer active on Rippling. Finally, if an event is archived by an insurance
+admin, it also will not be sent.
+
+# Document Link: https://rippling.atlassian.net/wiki/x/FIEJKwE
+
+
+
+
+## Analysis
+
+1. **Entity values:**
+   - Carrier: Beam
+   - Vendor: Noyo
+ 
+
+2. **Summary of the issue:** The issue concerns a situation where a new carrier connection with Beam via Noyo is set up, but despite all connection information matching between Rippling and Noyo and all plans being mapped, there seems to be an issue of unavailability of additional plans to map.
+
+
+3. **Overall Analysis of the issue:**
+
+   - The issue might be arising from the incorrect mapping of plans between Rippling and Noyo, like ticket BENINTEG-3813. Since the 'Include Older Plans' checkbox may not be checked, newer plans may not be mapped, resulting in the present issue. 
+   
+     The resolution based on the mentioned ticket involves selecting the 'Include Older Plans' checkbox in the Noyo plan mapping to enable additional plans. [Ticket BENINTEG-3813](https://rippling.atlassian.net/jira/software/c/projects/BENINTEG/issues/BENINTEG-3813)
+
+   - The issue may be due to a pending or incomplete setup on the Rippling dashboard, not reflecting the actual status with the Noyo connection (as in ticket BENINTEG-812). 
+   
+     Although the ticket states the issue was resolved over time without explicit action, it's worth checking the current setup status for the carrier connection on the dashboard. [Ticket BENINTEG-812](https://rippling.atlassian.net/jira/software/c/projects/BENINTEG/issues/BENINTEG-812)
+
+   - Dual communication not enabled for Beam might be a potential issue here as observed in the ticket BENINTEG-1201. While the issue may not directly map to this case, it is advisable to check if all communication paths are properly set up and functional. [Ticket BENINTEG-1201](https://rippling.atlassian.net/jira/software/c/projects/BENINTEG/issues/BENINTEG-1201)
+
+   - Incorrect plan mapping with conflicts in classification values as in ticket BENINTEG-3927 might also be a potential cause for the issue. Proper mapping will need to be ensured to resolve the current problem. [Ticket BENINTEG-3927](https://rippling.atlassian.net/jira/software/c/projects/BENINTEG/issues/BENINTEG-3927)
+
+      As per the documentation shared, plan mapping often represent significant differences in the structure and eligibility criteria between Rippling and Noyo. Thus, specific attention should be paid to ensure that all applicable guidelines in plan mapping like 'relationship choices', 'classification based eligibility' and the 'plan line type' are followed correctly. [Document: Plan Mapping]
+
+      The Company debugger tool might be useful to review the status of the group connections and access additional information like connection status and dates. [Document: Company Debugger]
+
+      The Unsubmittable Forms section in the document shared highlights some scenarios where actions are never submitted to carriers. Affirmation should be made whether the current situation meets any such criteria. [Document: Unsubmittable Forms]
+
+   
+4. **Data models:** 
+
+   - NoyoCompanyPlanInfo
+   - CompanyInsuranceInfo
+
+
+give next prompt file name(leave empty to end chat)
