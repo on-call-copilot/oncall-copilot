@@ -1,4 +1,4 @@
-from test_similar_tickets import get_similar_tickets
+
 from utils.files import read_markdown_file
 
 def get_resolver_system_prompt() -> str:
@@ -34,10 +34,9 @@ at last list all the help you need from user to resolve the issue like details o
 write all these in separate sections.
 
 
-
 """
 
-def get_resolver_user_prompt(other_docs: str, new_ticket_details: str) -> str:
+def get_resolver_user_prompt(other_docs: str, new_ticket_details: str, similar_ticket_details: str) -> str:
 
     """Get the system prompt with insurance basics overview."""
     # jira_ticket_format = read_markdown_file("jira-ticket-format.json")
@@ -56,15 +55,14 @@ you would want to check these documents for more information:
 -------------------------------------------
 
 here are some previous resolved tickets which might be similar to issue here:
-the  previous issues are in the following format:
-{{
-    "issue": "Issue being faced in ticket", 
-    "issue_summary": "Summary of the ticket issue.",
-    "rca": "A detailed summary of the reason found during investigation on what caused the issue",
-    "steps_taken": "summary of steps taken to resolve the issue.",
-    "data_models": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
+the  previous issues are in the following format:{{
+    "Issue": "Issue being faced in ticket", 
+    "Summary": "Summary of the ticket issue.",
+    "RCA": "A detailed summary of the reason found during investigation on what caused the issue",
+    "Steps": "summary of steps taken to resolve the issue.",
+    "Data Models Used": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
 }}
-{get_similar_tickets(new_ticket_details)}
+{similar_ticket_details}
 -------------------------------------------
 
 At the start of response always list out the main entity values you know you are dealing with like id and name of company, impacted employees, carriers, plans, vendor and other Id supplied.
@@ -115,7 +113,7 @@ write all these in separate sections.
 
 """
 
-def get_resolver_user_prompt_exp001(other_docs: str, new_ticket_details: str) -> str:
+def get_resolver_user_prompt_exp001(other_docs: str, new_ticket_details: str, similar_ticket_details: str) -> str:
 
     """Get the system prompt with insurance basics overview."""
     # jira_ticket_format = read_markdown_file("jira-ticket-format.json")
@@ -134,15 +132,14 @@ you would want to check these documents for more information:
 -------------------------------------------
 
 here are some previous resolved tickets which might be similar to issue here:
-the  previous issues are in the following format:
-{{
-    "issue": "Issue being faced in ticket", 
-    "issue_summary": "Summary of the ticket issue.",
-    "rca": "A detailed summary of the reason found during investigation on what caused the issue",
-    "steps_taken": "summary of steps taken to resolve the issue.",
-    "data_models": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
+the  previous issues are in the following format:{{
+    "Issue": "Issue being faced in ticket", 
+    "Summary": "Summary of the ticket issue.",
+    "RCA": "A detailed summary of the reason found during investigation on what caused the issue",
+    "Steps": "summary of steps taken to resolve the issue.",
+    "Data Models Used": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]"
 }}
-{get_similar_tickets(new_ticket_details)}
+{similar_ticket_details}
 -------------------------------------------
 
 Following are the tools available to you, suggest the usage of these tools to verify any resolution steps you suggest:
