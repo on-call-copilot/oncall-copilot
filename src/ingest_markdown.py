@@ -6,22 +6,33 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 import glob
 import json
+from langchain_core.documents import Document
 
-from langchain_text_splitters import MarkdownTextSplitter
+from langchain_text_splitters import MarkdownHeaderTextSplitter
+
+HEADERS_TO_SPLIT_ON = [
+    ("#", "Header 1"),
+    ("##", "Header 2"),
+]
 
 # Step 1: Load the Markdown file
 def load_markdown_file(file_path):
-    loader = UnstructuredMarkdownLoader(file_path)
-    documents = loader.load()
-    return documents
+    # loader = UnstructuredMarkdownLoader(file_path)
+    # documents = loader.load()
+    # return documents
+
+    with open(file_path, 'r', encoding='utf-8') as f:
+        markdown_text = f.read()
+
+    document = Document(page_content=markdown_text)
+    return document
+
+
 
 # Step 2: Split the document into chunks
 def split_documents(documents, chunk_size=1000, chunk_overlap=200):
-    text_splitter = MarkdownTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-    )
-    chunks = text_splitter.split_documents(documents)
+    markdown_splitter = MarkdownHeaderTextSplitter(HEADERS_TO_SPLIT_ON, strip_headers=False)
+    chunks = markdown_splitter.split_text(documents.page_content)
     return chunks
 
 # Step 3: Create embeddings and store in Chroma DB
@@ -56,19 +67,30 @@ def process_markdown_and_create_db(collection_name="markdown_collection"):
             print(f"Warning: File not found: {file_path}")
             continue
             
-        documents = load_markdown_file(file_path)
+        document = load_markdown_file(file_path)
         # Add metadata to each document
-        for doc in documents:
-            doc.metadata["page_id"] = page_info["pageId"]
-            doc.metadata["page_url"] = page_info["page_link"]
-        all_documents.extend(documents)
+        document.metadata["page_id"] = page_info["pageId"]
+        document.metadata["page_url"] = page_info["page_link"]
+        
+        all_documents.append(document)
     
-    # Split
-    chunks = split_documents(all_documents)
-    print(f"Split into {len(chunks)} chunks")
+    # print(all_documents[0])
+
+    all_chunks = []
+    for doc in all_documents:
+        chunks = split_documents(doc)
+        for chunk in chunks:
+            chunk.metadata["page_id"] = doc.metadata["page_id"]
+            chunk.metadata["page_url"] = doc.metadata["page_url"]
+        all_chunks.extend(chunks)
+
+    # Split the documents into chunks
+    print(f"Split into {len(all_chunks)} chunks")
+    # print(all_chunks[2])
+    # return
     
     # Embed and store
-    vectordb = create_and_store_embeddings(chunks, collection_name)
+    vectordb = create_and_store_embeddings(all_chunks, collection_name)
     print(f"Created Chroma DB with {vectordb._collection.count()} vectors")
     
     return vectordb
