@@ -1,6 +1,13 @@
 import requests
+import json
 
-def rippling_api_handler(token: str, path: str, payload: dict = {}, company_id: str = None, role_id: str = None):
+token = 'Bearer b3P8MbaJK86WUZarOxZzAXNfWAd9Hk'
+
+def rippling_api_handler(path: str, params: dict = {}, payload: dict = {}, company_id: str = None, role_id: str = None):
+    params_reduced = '&'.join([f'{k}={v}' for k, v in params.items()])
+    url = f"https://app.rippling.com{path}?{params_reduced}"
+
+    assert token.startswith('Bearer ')
 
     headers = {
         'authorization': token,
@@ -13,64 +20,44 @@ def rippling_api_handler(token: str, path: str, payload: dict = {}, company_id: 
     if company_id:
         headers['company'] = company_id
 
-    return requests.request("GET", path, headers=headers, data=payload).text
+    try:
+        response = requests.request("GET", url, headers=headers, data=payload)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        return response.text
+    except requests.exceptions.RequestException as e:
+        print(f"Error making request: {e}")
+        print(f"Response status code: {response.status_code}")
+        print(f"Response text: {response.text}")
+        return None
 
+def get_all_carriers_that_require_packets(enrollment_event_id: str, company_id: str, role_id: str):
+    """Get all carriers that require packets for a given enrollment event."""
+    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_all_carriers_that_require_packets"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
 
+def get_line_wise_carriers_and_plans_for_event(enrollment_event_id: str, company_id: str, role_id: str):
+    """Get line-wise carriers and plans for a given enrollment event."""
+    path = f"/api/insurance/api/base_company_enrollment_event/{enrollment_event_id}/get_line_wise_carriers_and_plans_for_event"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
 
+def get_renewal_details_for_lines_involved(enrollment_event_id: str, company_id: str, role_id: str):
+    """Get renewal details for lines involved in an enrollment event."""
+    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_renewal_details_for_lines_involved"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
 
-def make_api_calls(company_id: str, role_id: str, token: str):
+def get_total_employee_count_for_submission(enrollment_event_id: str, company_id: str, role_id: str):
+    """Get total employee count for submission for a given enrollment event."""
+    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_total_employee_count_for_submission"
+    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
 
-    response_line_configuration = rippling_api_handler(
-        token=token,
-        path='https://app.rippling.com/api/insurance/api/line_configuration/all_line_infos',
-        company_id=company_id,
-        role_id=role_id,
-    )
+print("\nTesting get_all_carriers_that_require_packets:")
+print(get_all_carriers_that_require_packets(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-    print(response_line_configuration)
+print("\nTesting get_line_wise_carriers_and_plans_for_event:")
+print(get_line_wise_carriers_and_plans_for_event(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-    response_companies = rippling_api_handler(
-        token=token,
-        path='https://app.rippling.com/api/hub/api/companies/?large_get_query=true',
-        company_id=company_id,
-        role_id=role_id,
-    )
+print("\nTesting get_renewal_details_for_lines_involved:")
+print(get_renewal_details_for_lines_involved(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-    print(response_companies)
-
-    response_company_insurance_info = rippling_api_handler(
-        token=token,
-        path='https://app.rippling.com/api/insurance/api/company_insurance_info/?large_get_query=true',
-        company_id=company_id,
-        role_id=role_id,
-    )
-
-    print(response_company_insurance_info)
-
-    response_carrier = rippling_api_handler(
-        token=token,
-        path='https://app.rippling.com/api/insurance/api/carrier/583fdf270971c5546929c869',
-        company_id=company_id,
-        role_id=role_id,
-    )
-
-    print(response_carrier)
-
-    response_eligibility_company_carrier_line_info = rippling_api_handler(
-        token=token,
-        path='https://app.rippling.com/api/insurance/api/eligibility_company_carrier_line_info/get_selected_eligibility_cclis_for_company_event?companyEnrollmentEventId=651c281fd6554f8c0bd8a0ec',
-        company_id=company_id,
-        role_id=role_id,
-    )
-
-    print(response_eligibility_company_carrier_line_info)
-
-
-
-
-if __name__ == "__main__":
-    company_id = ['585c512df20db5063607e146']
-    role_id = ['66bb21feb04ae2fc4ea74c43']
-    token = ['Bearer b3P8MbaJK86WUZarOxZzAXNfWAd9Hk']
-    for i, _ in enumerate(company_id):
-        print(make_api_calls(company_id[i], role_id[i], token[i]))
+print("\nTesting get_total_employee_count_for_submission:")
+print(get_total_employee_count_for_submission(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))

@@ -11,7 +11,6 @@ from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 HEADERS_TO_SPLIT_ON = [
-    ("#", "Header 1"),
     ("##", "Header 2"),
 ]
 

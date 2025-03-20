@@ -4,11 +4,18 @@ from openai import OpenAI
 from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt
 from query_markdown import get_similar_markdown_docs
 from test_similar_tickets import get_similar_tickets
+from utils.files import read_markdown_file
 
-
+# def get_user_prompt(file_content: str: list):
+#     user_input = input("\n\ngive next prompt file name(leave empty to end chat)")
+#     if user_input == "":
+#         return None
+#     else:
+#         return read_markdown_file(user_input)
 
 def main():
-    new_ticket_details = input("Enter the details of the ticket troubling you:")
+    # new_ticket_details = input("Enter the details of the ticket troubling you:")
+    new_ticket_details = read_markdown_file("input.txt")
     other_docs = get_similar_markdown_docs(new_ticket_details, 3)
     similar_ticket_details = get_similar_tickets(new_ticket_details, similarity_threshold = 0.6)
     ticket_string = ""
@@ -19,17 +26,33 @@ def main():
 
     print(user_resolver_prompt)
     dotenv.load_dotenv()
+    messages = [
+            {"role": "system", "content": system_resolver_prompt},
+            {"role": "user", "content": user_resolver_prompt},
+        ]
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.chat.completions.create(
         model="gpt-4-turbo",
-        messages=[
-            {"role": "system", "content": system_resolver_prompt},
-            {"role": "user", "content": user_resolver_prompt},
-        ],
+        messages=messages,
     )
     print(response.choices[0].message.content)
-
-
-
+    messages.append({"role": "assistant", "content": response.choices[0].message.content})
+    next_step = True
+    while next_step:
+        user_input = input("\n\ngive next prompt file name(leave empty to end chat)")
+        if user_input == "":
+            next_step = False
+        else:
+            file_content = read_markdown_file(user_input)
+            
+            messages.append({"role": "user", "content": file_content})
+            response = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=messages,
+            )
+            print("\n\n\n")
+            print(print(response.choices[0].message.content))
+            messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            print("\n\n\n")
 if __name__ == "__main__":
     main()

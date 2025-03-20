@@ -1,0 +1,14 @@
+Context: This group has a new carrier connection with Beam in Noyo, all connection information matches between rippling and noyo, plans are mapped, and no additional plans are available to map. 
+
+Group | Claryo, Inc. 
+Debugger | https://app.rippling.com/super_user/insurance/company-event-debugger/search/637545f1a3a2c9c8f4adef54
+Noyo CC | https://app.noyo.com/groups/a2c66c38-8b0f-43c2-9e13-c252e881754b
+
+Debugger Error: 
+Unable to find a matching Noyo plan mapping information. Please collaborate with the INS Ops team to verify or update Noyo plan mappings for the Ripping plan: Beam SmartPremium Plus 100/80/50/50-1500-1500, line type: dental. Error details: Object type: <class ‘insurance.models.noyo_models.NoyoCompanyPlanInfo'>, queried_with : {'company_id': '637545f1a3a2c9c8f4adef54', 'noyo_group_id': 'a2c66c38-8b0f-43c2-9e13-c252e881754b', 'company_plan_info_id': '6764b3a105f0976360c64f15', 'company_plan_info_plan_name': 'Beam SmartPremium Plus 100/80/50/50-1500-1500', 'member_type': 'employee', 'line_type': 'dental', 'classification_values': '{}', 'carrier': 'Beam'}
+
+Ops Troubleshooting: 
+Verified connection information matches between company debugger page and noyo cc, checked for old mapped plans, checked individual enrollments in noyo to confirm no beam enrollment information has sent. 
+
+Ask: 
+Will you look into why the plans aren’t populating in the plan mapper for the group, and add the Beam plans for mapping? 
