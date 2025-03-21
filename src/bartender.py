@@ -7,6 +7,9 @@ from query_markdown import get_similar_markdown_docs
 from jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
 from utils.files import read_markdown_file
+from follow_up_prompt import FOLLOW_UP_PROMPT
+from rippling_api import get_noyo_company_plan_info_objects, get_custom_communication_detail_objects
+import json
 
 jira_client = JiraIntegrator()
 def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = None):
@@ -32,28 +35,69 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
         messages=messages,
     )
     print(response.choices[0].message.content)
-    messages.append({"role": "assistant", "content": response.choices[0].message.content})
-    messages[0]["content"] = get_followup_resolver_system_prompt()
-    # jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
-    next_step = True
-    while next_step:
-        user_input = input("\n\ngive next prompt file name(leave empty to end chat)")
-        if user_input == "":
-            next_step = False
-        else:
-            file_content = read_markdown_file(user_input)
 
-            print(file_content)
-            
-            messages.append({"role": "user", "content": file_content})
-            response = client.chat.completions.create(
+    
+    messages.append({"role": "assistant", "content": response.choices[0].message.content})
+    messages.append({"role": "user", "content": FOLLOW_UP_PROMPT})
+    
+    follow_up_response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=messages,
+    )
+    print("\nFollow-up response:")
+    print(follow_up_response.choices[0].message.content)
+    
+    try:
+        data_models_response = json.loads(follow_up_response.choices[0].message.content)
+        company_id = data_models_response.get("company_id")
+        data_models = data_models_response.get("data_models", [])
+
+        noyo_info = None
+        comm_details = None
+
+        if "NoyoCompanyPlanInfo" in data_models:
+            print("\nFetching Noyo Company Plan Info:")
+            noyo_info = get_noyo_company_plan_info_objects(company_id)
+            print(noyo_info)
+
+        if any("Communication" in model for model in data_models):
+            print("\nFetching Custom Communication Details:")
+            comm_details = get_custom_communication_detail_objects(company_id)
+            print(comm_details)
+
+        # Only proceed with the additional message if we have either noyo_info or comm_details
+        if noyo_info or comm_details:
+            additional_context = "Here is additional context from our systems:\n\n"
+            if noyo_info:
+                additional_context += "Noyo Company Plan Information:\n"
+                additional_context += json.dumps(noyo_info, indent=2) + "\n\n"
+            if comm_details:
+                additional_context += "Custom Communication Details:\n"
+                additional_context += json.dumps(comm_details, indent=2)
+
+            messages.append({"role": "user", "content": additional_context})
+
+            print(additional_context)
+
+            return
+
+            # modify the system prompt to include the additional context
+            messages[0]["content"] = get_followup_resolver_system_prompt()
+
+            final_response = client.chat.completions.create(
                 model="gpt-4-turbo",
                 messages=messages,
             )
-            print("\n\n\n")
-            print(print(response.choices[0].message.content))
-            messages.append({"role": "assistant", "content": response.choices[0].message.content})
-            print("\n\n\n")
-            jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
+            print("\nFinal analysis with additional context:")
+            print(final_response.choices[0].message.content)
+            
+    except json.JSONDecodeError:
+        print("Failed to parse follow-up response as JSON")
+
+    
+    # Uncomment to enable Jira comment posting
+    # if ticket_url:
+    #     jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
+    
 if __name__ == "__main__":
     triage_ticket()

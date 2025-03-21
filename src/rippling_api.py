@@ -62,14 +62,14 @@ def get_total_employee_count_for_submission(company_enrollment_event_id: str, co
 
 
 
-print("\nTesting get_all_carriers_that_require_packets:")
-print(get_all_carriers_that_require_packets(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
+# print("\nTesting get_all_carriers_that_require_packets:")
+# print(get_all_carriers_that_require_packets(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-print("\nTesting get_line_wise_carriers_and_plans_for_event:")
-print(get_line_wise_carriers_and_plans_for_event(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
+# print("\nTesting get_line_wise_carriers_and_plans_for_event:")
+# print(get_line_wise_carriers_and_plans_for_event(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-print("\nTesting get_renewal_details_for_lines_involved:")
-print(get_renewal_details_for_lines_involved(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
+# print("\nTesting get_renewal_details_for_lines_involved:")
+# print(get_renewal_details_for_lines_involved(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
 
-print("\nTesting get_total_employee_count_for_submission:")
-print(get_total_employee_count_for_submission(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
+# print("\nTesting get_total_employee_count_for_submission:")
+# print(get_total_employee_count_for_submission(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
