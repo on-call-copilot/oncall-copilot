@@ -48,16 +48,22 @@ class RipplingApiHandler:
             print(f"Response text: {response.text}")
             return None
 
-    def get_noyo_company_plan_info(self, company_id: str):
+    def get_noyo_company_plan_info(self, company_id: str, company_plan_info_id: str = None):
         """Get noyo company plan info objects for a given company.
         
         Args:
             company_id (str): Optional company ID to override the default
         """
         path = "/api/insurance/api/noyo_company_plan_info/"
+
+        payload = {
+            'company': company_id,
+        }
+        if company_plan_info_id:
+            payload['company_plan_info'] = company_plan_info_id
         return self._make_request(
             path, 
-            params={'company': company_id},
+            params=payload,
         )
 
     def get_custom_communication_detail(self, company_id: str):
