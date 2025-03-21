@@ -281,12 +281,8 @@ async def triage_issue(request: IssueRequest):
                 
                 # Create a detailed string with issue information
                 issue_text = f"""
-                Ticket: {request.jiraLink}
                 Summary: {issue_details.get('summary', 'N/A')}
                 Description: {issue_details.get('description', 'N/A')}
-                Reporter: {issue_details.get('reporter', 'N/A')}
-                Priority: {issue_details.get('priority', 'N/A')}
-                Status: {issue_details.get('status', 'N/A')}
                 """
                 
                 await debug_print(connection_id, "Starting ticket analysis...", "info")
@@ -298,7 +294,7 @@ async def triage_issue(request: IssueRequest):
                     try:
                         # When triage_ticket runs, it will use our patched print
                         # which already puts output in the global queue
-                        result = triage_ticket(issue_text)
+                        result = triage_ticket(issue_text, request.jiraLink)
                         return result
                     except Exception as e:
                         original_print(f"Error in triage: {e}")

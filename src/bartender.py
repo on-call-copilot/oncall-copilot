@@ -4,10 +4,12 @@ import dotenv
 from openai import OpenAI
 from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt
 from query_markdown import get_similar_markdown_docs
+from src.jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
 from utils.files import read_markdown_file
 
-def triage_ticket(new_ticket_details: Optional[str] = None):
+jira_client = JiraIntegrator()
+def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = None):
     # new_ticket_details = input("Enter the details of the ticket troubling you:")
     if new_ticket_details is None:
         new_ticket_details = read_markdown_file("input.txt")
@@ -49,6 +51,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None):
             print("\n\n\n")
             print(print(response.choices[0].message.content))
             messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
             print("\n\n\n")
 if __name__ == "__main__":
     triage_ticket()
