@@ -2,7 +2,7 @@ import os
 from typing import Optional
 import dotenv
 from openai import OpenAI
-from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt
+from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt, get_followup_resolver_system_prompt
 from query_markdown import get_similar_markdown_docs
 from jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
@@ -33,8 +33,9 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     )
     print(response.choices[0].message.content)
     messages.append({"role": "assistant", "content": response.choices[0].message.content})
-    jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
-    next_step = False
+    messages[0]["content"] = get_followup_resolver_system_prompt()
+    # jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
+    next_step = True
     while next_step:
         user_input = input("\n\ngive next prompt file name(leave empty to end chat)")
         if user_input == "":

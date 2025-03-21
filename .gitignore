@@ -6,3 +6,5 @@ local_outputs/
 logs.txt
 *.sqlite3
 chroma*/
+input.txt
+next_input.txt
