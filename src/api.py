@@ -285,7 +285,7 @@ async def triage_issue(request: IssueRequest):
                 Description: {issue_details.get('description', 'N/A')}
                 """
                 
-                await debug_print(connection_id, "Starting ticket analysis...", "info")
+                await debug_print(connection_id, "Starting ticket analysis... Sit tight for but a minute or two...", "info")
                 
                 # Run the triage function in an executor to not block the event loop
                 loop = asyncio.get_event_loop()

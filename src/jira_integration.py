@@ -17,6 +17,145 @@ class JiraIntegrator:
         self.setup_jira()
         dotenv.load_dotenv()
 
+    def markdown_to_adf(self, markdown_text):
+        """
+        Convert Markdown to Atlassian Document Format (ADF)
+        This function uses the Atlassian Document Format converter API
+        to transform markdown into ADF JSON structure.
+        """
+        # Option 1: Use Atlassian's Cloud API (if you have access)
+        url = "https://api.atlassian.com/document/converter"
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+        
+        payload = {
+            "sourceFormat": "markdown",
+            "targetFormat": "adf", 
+            "content": markdown_text
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Error converting Markdown to ADF: {e}")
+            # If API fails, use the manual conversion fallback below
+            return self.manual_markdown_to_adf(markdown_text)
+
+
+    def manual_markdown_to_adf(self, markdown_text):
+        """
+        A simplified manual conversion of Markdown to ADF.
+        This is not comprehensive but handles basic Markdown elements.
+        """
+        import re
+        
+        # Initialize the ADF document structure
+        adf = {
+            "version": 1,
+            "type": "doc",
+            "content": []
+        }
+        
+        # Split the markdown by lines
+        lines = markdown_text.split('\n')
+        current_paragraph = None
+        in_list = False
+        list_items = []
+        
+        for line in lines:
+            # Handle headings
+            heading_match = re.match(r'^(#{1,6})\s+(.+)$', line)
+            if heading_match:
+                level = len(heading_match.group(1))
+                heading_text = heading_match.group(2)
+                
+                adf["content"].append({
+                    "type": "heading",
+                    "attrs": {"level": level},
+                    "content": [{"type": "text", "text": heading_text}]
+                })
+                continue
+                
+            # Handle bullet lists
+            if line.strip().startswith('- ') or line.strip().startswith('* '):
+                list_text = line.strip()[2:]
+                if not in_list:
+                    in_list = True
+                    list_items = []
+                
+                list_items.append({
+                    "type": "listItem",
+                    "content": [{
+                        "type": "paragraph",
+                        "content": [{"type": "text", "text": list_text}]
+                    }]
+                })
+                continue
+            elif in_list and line.strip() == '':
+                # End of list
+                adf["content"].append({
+                    "type": "bulletList",
+                    "content": list_items
+                })
+                in_list = False
+                list_items = []
+                continue
+                
+            # Handle code blocks (simple version)
+            if line.strip().startswith('```'):
+                # We'll skip full code block handling for simplicity
+                continue
+                
+            # Handle bold and italic (simplified)
+            # This is much more complex in reality and would need a proper parser
+            
+            # Handle paragraphs (anything else)
+            if line.strip():
+                # Process inline formatting (bold, italic, links)
+                # This is simplified for demonstration
+                
+                # Bold text: **text** or __text__
+                bold_pattern = r'\*\*(.*?)\*\*|__(.*?)__'
+                # Italic text: *text* or _text_
+                italic_pattern = r'\*(.*?)\*|_(.*?)_'
+                # Links: [text](url)
+                link_pattern = r'\[(.*?)\]\((.*?)\)'
+                
+                # For simplicity, we're just adding the line as plain text
+                # A real implementation would parse these inline elements
+                
+                adf["content"].append({
+                    "type": "paragraph",
+                    "content": [{"type": "text", "text": line}]
+                })
+        
+        # Handle any remaining list
+        if in_list:
+            adf["content"].append({
+                "type": "bulletList",
+                "content": list_items
+            })
+        
+        return adf
+
+
+    def plain_text_to_markdown(self, text):
+        # Add simple Markdown formatting
+        # Headers (lines ending with colon)
+        text = re.sub(r'^(.+):$', r'## \1', text, flags=re.MULTILINE)
+        
+        # Auto-detect URLs and convert to links
+        url_pattern = r'https?://[^\s]+'
+        text = re.sub(url_pattern, lambda m: f'[{m.group(0)}]({m.group(0)})', text)
+        
+        # Format paragraphs properly
+        paragraphs = re.split(r'\n\s*\n', text)
+        return '\n\n'.join(paragraphs)
+
     def setup_jira(self):
         """Initialize Jira client with credentials from environment variables"""
         try:
@@ -95,7 +234,7 @@ class JiraIntegrator:
             raise
 
 
-    def post_jira_comment(self, jira_url, comment_text, username=None, api_token=None):
+    def post_jira_comment(self, ticket_url:str, comment_text:str, username:Optional[str]=None, api_token:Optional[str]=None):
         """
         Post a comment to a Jira issue.
         
@@ -109,11 +248,17 @@ class JiraIntegrator:
             dict: Response from the Jira API
         """
         # Extract the Jira domain from the URL
-        parsed_url = urlparse(jira_url)
+        parsed_url = urlparse(ticket_url)
         jira_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+        comment_text = f"""
+        ```
+        {comment_text}
+        ```
+        """
         
         # Extract the issue key from the URL
-        issue_key = self.extract_issue_key(jira_url)
+        issue_key = self.extract_issue_key(ticket_url)
         
         # If credentials are not provided, prompt for them
         if not username:
@@ -150,6 +295,7 @@ class JiraIntegrator:
                 ]
             }
         }
+
         
         # Make the API request with Basic Authentication
         response = requests.post(
@@ -161,7 +307,7 @@ class JiraIntegrator:
         
         # Check if the request was successful
         if response.status_code == 201:
-            print(f"Comment successfully posted to {issue_key}")
+            print(f"Comment successfully posted to {issue_key}: {ticket_url}")
             return response.json()
         else:
             print(f"Failed to post comment. Status code: {response.status_code}")
