@@ -281,7 +281,7 @@ async def triage_issue(request: IssueRequest):
                 
                 # Create a detailed string with issue information
                 issue_text = f"""
-                Summary: {issue_details.get('summary', 'N/A')}
+                Title: {issue_details.get('summary', 'N/A')}
                 Description: {issue_details.get('description', 'N/A')}
                 """
                 
