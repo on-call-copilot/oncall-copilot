@@ -3,15 +3,16 @@ import os
 from typing import Optional
 import dotenv
 from openai import OpenAI
-from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt, get_followup_resolver_system_prompt
+from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt, get_resolver_system_prompt_for_board_change, get_resolver_user_prompt_for_board_change
 from query_markdown import get_similar_markdown_docs
 from jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
-from utils.files import read_markdown_file
 from follow_up_prompt import FOLLOW_UP_PROMPT
 from rippling_api import RipplingApiHandler
+from utils.files import read_markdown_file, read_json_file
 
 jira_client = JiraIntegrator()
+
 def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = None):
     if new_ticket_details is None:
         new_ticket_details = read_markdown_file("input.txt")
@@ -39,6 +40,41 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
         messages=messages,
     )
     print(response.choices[0].message.content)
+
+    messages.append({"role": "assistant", "content": response.choices[0].message.content})
+
+    ticket_string, raw_jira_data = '', read_json_file("./jira-exports/jira-beninteg-data-dump-by-key.json")
+    similar_jiras = [raw_jira_data[similar_ticket["key"]] for similar_ticket in similar_ticket_details]
+
+    board_changes_for_similar_jiras = map(
+        lambda jira: {
+            'from': jira['board_changes']['from'], 
+            'to': jira['board_changes']['to'], 
+            'changed_on': jira['board_changes']['changed_on']
+        } if jira['board_changes'] else None, 
+        similar_jiras
+    )
+
+    for similar_ticket, board_changes in zip(similar_ticket_details, board_changes_for_similar_jiras):
+        ticket_string += f"Ticket Key: {similar_ticket['key']}\n Issue: {similar_ticket['issue']}\n Summary: {similar_ticket['issue_summary']}\n Data Models Used: {similar_ticket['data_models']}\n Board Changes: {board_changes}\n\n"
+    
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": get_resolver_system_prompt_for_board_change()},
+            {"role": "user", "content": get_resolver_user_prompt_for_board_change(new_ticket_details, ticket_string)},
+        ],
+    )
+    print(response.choices[0].message.content)
+    messages.append({"role": "assistant", "content": response.choices[0].message.content})
+
+    next_step = False
+    while next_step:
+        user_input = input("\n\ngive next prompt file name(leave empty to end chat)")
+        if user_input == "":
+            next_step = False
+        else:
+            file_content = read_markdown_file(user_input)
 
     response_to_post_on_jira = response.choices[0].message.content
 
