@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BartenderAI</title>
+  <style>
+    :root {
+      --primary: #512f3e;
+      --primary-light: #674052;
+      --primary-dark: #3b222e;
+      --white: #FFFFFF;
+      --light-gray: #F5F5F5;
+      --success: #4caf50;
+      --info: #2196f3;
+      --warning: #ff9800;
+      --error: #f44336;
+      --debug: #9e9e9e;
+      --output: #673ab7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--white);
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 1.5rem;
+      border-radius: 8px 8px 0 0;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-description {
+      font-size: 1rem;
+      color: var(--light-gray);
+      opacity: 0.9;
+    }
+
+    .form-container {
+      background-color: var(--white);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid #eee;
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(112, 66, 86, 0.2);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    button.secondary {
+      background-color: #6c757d;
+    }
+    
+    button.secondary:hover {
+      background-color: #5a6268;
+    }
+    
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .ripple {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 1.2s linear;
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    .response-container {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: var(--light-gray);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+      display: none;
+    }
+
+    .response-title {
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .log-container {
+      margin-top: 2rem;
+      padding: 0;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      max-height: 500px;
+      overflow-y: auto;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      font-family: 'Courier New', monospace;
+    }
+
+    .log-title {
+      padding: 0.75rem 1rem;
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-title button {
+      background: none;
+      border: none;
+      color: white;
+      width: auto;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .log-title button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .log-entries {
+      padding: 0.5rem;
+      list-style: none;
+    }
+
+    .log-entry {
+      padding: 0.5rem;
+      border-bottom: 1px solid #333;
+      word-break: break-word;
+      display: flex;
+      font-size: 0.9rem;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-timestamp {
+      color: #888;
+      font-size: 0.75rem;
+      min-width: 120px;
+    }
+
+    .log-message {
+      flex: 1;
+      white-space: pre-wrap;
+    }
+
+    .log-level {
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .log-level-info {
+      background-color: var(--info);
+      color: white;
+    }
+
+    .log-level-debug {
+      background-color: var(--debug);
+      color: white;
+    }
+
+    .log-level-warning {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .log-level-error {
+      background-color: var(--error);
+      color: white;
+    }
+
+    .log-level-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .log-level-output {
+      background-color: var(--output);
+      color: white;
+    }
+
+    .json-data {
+      background-color: #2d2d2d;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      overflow-x: auto;
+    }
+
+    .connection-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    
+    .connection-active {
+      background-color: var(--success);
+    }
+    
+    .connection-inactive {
+      background-color: #ccc;
+    }
+
+    /* Special styling for AI output */
+    .ai-output {
+      background-color: #f0f0f0;
+      border-left: 4px solid var(--output);
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: #777;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.20/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Helper function to render markdown
+    const renderMarkdown = (text) => {
+      try {
+        return { __html: marked.parse(text) };
+      } catch (e) {
+        return { __html: text };
+      }
+    };
+
+    function BartenderAI() {
+      const [formData, setFormData] = useState({
+        jiraLink: '',
+      });
+
+      const [isSubmitted, setIsSubmitted] = useState(false);
+      const [isLoading, setIsLoading] = useState(false);
+      const [responseData, setResponseData] = useState(null);
+      const [logs, setLogs] = useState([]);
+      const [isConnected, setIsConnected] = useState(false);
+      const [connectionId, setConnectionId] = useState(null);
+      const [mode, setMode] = useState('process'); // 'process' or 'triage'
+      
+      const eventSourceRef = useRef(null);
+      const logContainerRef = useRef(null);
+
+      // Function to connect to the SSE endpoint
+      const connectToEventSource = () => {
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+        }
+
+        const eventSource = new EventSource('http://localhost:8000/api/events');
+        eventSourceRef.current = eventSource;
+
+        eventSource.onopen = () => {
+          setIsConnected(true);
+          console.log('Connected to event stream');
+        };
+
+        eventSource.onmessage = (event) => {
+          console.log('SSE message received:', event.data);
+          try {
+            const data = JSON.parse(event.data);
+            
+            // Handle connection ID message
+            if (data.type === 'connection') {
+              console.log('Connection ID received:', data.id);
+              setConnectionId(data.id);
+              return;
+            }
+            
+            // Add the new log entry
+            console.log('Adding log entry:', data);
+            setLogs(prevLogs => [...prevLogs, data]);
+            
+            // Auto-scroll to the bottom of the log container
+            if (logContainerRef.current) {
+              logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+            }
+          } catch (error) {
+            console.error('Error parsing event data:', error);
+          }
+        };
+
+        eventSource.onerror = (error) => {
+          console.error('EventSource error:', error);
+          setIsConnected(false);
+          
+          // Try to reconnect
+          setTimeout(() => {
+            if (eventSourceRef.current) {
+              eventSourceRef.current.close();
+              connectToEventSource();
+            }
+          }, 3000);
+        };
+      };
+
+      // Connect to the event source on component mount
+      useEffect(() => {
+        connectToEventSource();
+        
+        // Initialize with a connection message
+        setLogs([{
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: 'Connecting to server...'
+        }]);
+        
+        // Cleanup on unmount
+        return () => {
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+          }
+        };
+      }, []);
+
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value
+        });
+      };
+
+      const clearLogs = () => {
+        setLogs([]);
+      };
+
+      const addRippleEffect = (button) => {
+        const circle = document.createElement('span');
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.marginLeft = circle.style.marginTop = `-${diameter/2}px`;
+        circle.classList.add('ripple');
+        
+        // Remove existing ripples
+        const ripple = button.getElementsByClassName('ripple')[0];
+        if (ripple) {
+          ripple.remove();
+        }
+        
+        button.appendChild(circle);
+      };
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!connectionId) {
+          alert('Not connected to server yet. Please wait a moment and try again.');
+          return;
+        }
+        
+        // Create ripple effect
+        addRippleEffect(e.currentTarget);
+        
+        setIsLoading(true);
+        setIsSubmitted(false);
+        clearLogs();
+        
+        // Add a debug log message to verify the form submission
+        console.log(`Submitting form with connectionId: ${connectionId}`);
+        setLogs(prevLogs => [...prevLogs, {
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: 'Submitting request to server...'
+        }]);
+        
+        try {
+          const requestData = {
+            ...formData,
+            connection_id: connectionId
+          };
+          
+          console.log('Sending request data:', requestData);
+          
+          // Choose endpoint based on mode
+          const endpoint = mode === 'triage' 
+            ? 'http://localhost:8000/api/triage-issue'
+            : 'http://localhost:8000/api/process-with-stream';
+          
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+          console.log('Success:', data);
+          
+          // We don't set isSubmitted here because we'll wait for the final result in the stream
+        } catch (error) {
+          console.error('Error:', error);
+          alert('There was an error processing your request');
+          setIsLoading(false);
+        }
+      };
+
+      const toggleMode = () => {
+        setMode(mode === 'process' ? 'triage' : 'process');
+      };
+
+      // Process logs for display
+      const formatLogMessage = (log) => {
+        if (log.level === 'output') {
+          // For output logs, try to find if it's GPT output 
+          return <div dangerouslySetInnerHTML={renderMarkdown(log.message)} />;
+        }
+        
+        try {
+          // Try to parse as JSON for pretty formatting
+          const parsed = JSON.parse(log.message);
+          return (
+            <>
+              <div>{typeof parsed === 'string' ? parsed : 'Object:'}</div>
+              {typeof parsed !== 'string' && (
+                <div className="json-data">
+                  <pre>{JSON.stringify(parsed, null, 2)}</pre>
+                </div>
+              )}
+            </>
+          );
+        } catch (e) {
+          // Not valid JSON, just return as is
+          return log.message;
+        }
+      };
+
+      // Listen for specific log messages to update UI state
+      useEffect(() => {
+        if (logs.length > 0) {
+          const lastLog = logs[logs.length - 1];
+          
+          // Check for result message
+          if (lastLog.level === 'result') {
+            try {
+              const resultData = JSON.parse(lastLog.message);
+              setResponseData(resultData);
+              setIsSubmitted(true);
+            } catch (e) {
+              console.error('Error parsing result:', e);
+            }
+          }
+          
+          // End of processing
+          if (lastLog.level === 'end') {
+            setIsLoading(false);
+          }
+        }
+      }, [logs]);
+
+      return (
+        <div className="container">
+          <header>
+            <h1>BartenderAI</h1>
+            <p className="app-description">Your automated issue management assistant</p>
+          </header>
+
+          <div className="form-container">
+            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+              <button 
+                onClick={toggleMode} 
+                className="secondary" 
+                style={{ width: 'auto', marginBottom: '1rem' }}>
+                  Switch to {mode === 'process' ? 'Triage Mode' : 'Process Mode'}
+              </button>
+              <h3>{mode === 'process' ? 'Process Issue' : 'Triage Issue with AI'}</h3>
+            </div>
+            
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="jiraLink">Jira Issue Link</label>
+                <input
+                  type="text"
+                  id="jiraLink"
+                  name="jiraLink"
+                  value={formData.jiraLink}
+                  onChange={handleChange}
+                  placeholder="https://your-domain.atlassian.net/browse/PROJ-123"
+                  required
+                />
+              </div>
+              <button type="submit" disabled={isLoading || !isConnected}>
+                {isLoading ? 'Processing...' : mode === 'process' ? 'Process Issue' : 'Triage Issue'}
+              </button>
+            </form>
+            
+            <div style={{ textAlign: 'center', marginTop: '0.75rem', fontSize: '0.875rem' }}>
+              <span className={`connection-indicator ${isConnected ? 'connection-active' : 'connection-inactive'}`}></span>
+              {isConnected ? 'Connected to server' : 'Connecting to server...'}
+            </div>
+          </div>
+
+          {logs.length > 0 && (
+            <div className="log-container" ref={logContainerRef}>
+              <div className="log-title">
+                <span>{mode === 'process' ? 'Processing Log' : 'Triage Output'}</span>
+                <button onClick={clearLogs}>Clear</button>
+              </div>
+              <ul className="log-entries">
+                {logs.map((log, index) => (
+                  <li key={index} className="log-entry">
+                    <div className="log-timestamp">{log.timestamp}</div>
+                    <div>
+                      <span className={`log-level log-level-${log.level}`}>{log.level}</span>
+                      <span className="log-message">{formatLogMessage(log)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {isSubmitted && responseData && (
+            <div className="response-container" style={{ display: 'block' }}>
+              <div className="response-title">Issue Processed Successfully</div>
+              <pre style={{ 
+                whiteSpace: 'pre-wrap', 
+                backgroundColor: '#f5f5f5',
+                padding: '1rem',
+                borderRadius: '4px',
+                marginTop: '1rem'
+              }}>
+                {JSON.stringify(responseData, null, 2)}
+              </pre>
+            </div>
+          )}
+
+          <footer>
+            <p>© 2025 BartenderAI - Automated Issue Management Solution</p>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<BartenderAI />, document.getElementById('root'));
+  </script>
+</body>
+</html>

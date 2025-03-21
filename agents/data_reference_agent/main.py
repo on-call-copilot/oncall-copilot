@@ -29,7 +29,7 @@ def main():
     chunks = text_splitter.split_documents(documents)
 
     # print(f"Loaded {len(documents)} documents and split into {len(chunks)} chunks")
-    print(chunks[0])
+    # print(chunks[0])
 
     vectorstore = Chroma.from_documents(
         documents=chunks,

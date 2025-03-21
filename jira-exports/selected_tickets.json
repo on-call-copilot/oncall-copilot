@@ -1,0 +1,410 @@
+[
+  {
+    "key": "BENINTEG-4108",
+    "summary": "Delfino AI, Inc // Noyo transaction blocked even though plan is mapped ",
+    "description": "*Issue Description*: This employee\u2019s Noyo Beam transaction (PA ID: [+673ba642995ccffe06675f0d+|https://app.rippling.com/super_user/script/object_history?cls=PendingAction&module=insurance.models.ops_models&id=673ba642995ccffe06675f0d&prettify=True]) is blocked due to the following error message: \n\n{{Encountered an exception while performing the action. Exception: Unable to find a matching Noyo plan mapping information. Please collaborate with the INS Ops team to verify or update Noyo plan mappings for the Ripping plan: Anthem Gold PPO HSA/H 1700/3200/3400 15% PrevRx, line type: medical. Error details: Object type: , queried_with : {'company_id': '63177e57636a20001f5553c2', 'noyo_group_id': 'b88cf9c7-f861-40b7-88dd-0f036f3db896', 'company_plan_info_id': '67240555771aa6f4055b5b47', 'company_plan_info_plan_name': 'Anthem Gold PPO HSA/H 1700/3200/3400 15% PrevRx', 'line_type': 'medical', 'member_type': 'employee', 'carrier': 'Anthem Blue Cross'}}}\n\nI can confirm that the Rippling plan (Anthem Gold PPO HSA/H 1700/3200/3400 15% PrevRx) is mapped to the correct Noyo plan (see attached). It is unclear why this transaction is blocked given that the plan appears to be mapped correctly. There are two open \u2018Configuration Assignment\u2019 tasks ([67937704c7d067a35a8627ff|https://app.rippling.com/super_user/insurance/insurance-tasks?id=67937704c7d067a35a8627ff], [67937705c7d067a35a862808|https://app.rippling.com/super_user/insurance/insurance-tasks?id=67937705c7d067a35a862808]), but I cannot get them to load so I am unable to tell if these are also blocking the transaction. However, upon reviewing both the Anthem and Beam configurations in Noyo, there are not be any bill groups, sort classes (etc\u2026) that need to be added to the \u2018Manage Carrier Classifications\u2019 page of Rippling.  \n\n*Account and EE Details*\n\nCompany ID: 63177e57636a20001f5553c2\n\nCountry: USA\n\nARR: $3,507.27 \n\nEntity Name: Delfino AI, Inc\n\nName & Role IDs of affected employee(s) / admin(s), if applicable\n\n* Sneh Patel / 63177e68636a20001f5556b7\n\nLink to payrun and payrun ID: N/A\n\nEscalated client: No\n\nPEO Customer: No\n\n*Troubleshooting actions taken so far*: \n\n# Unampped and remapped the affected plan in Noyo plan Mapper and retried transaction \n# Located two open \u2018Configuration Assignment\u2019 tasks; however, they are not loading. No additional configuration work should be necessary based on the data present in the Anthem and Beam \u2018Configuration\u2019 pages of Noyo \n\n*Action required from Eng*: Please research why the transaction is blocked given that the plan identified in the error message is mapped correctly in the Noyo Plan Mapper. \n\n*Product-Specific Issue Details*: This issue pertains to a BOR (Waveling only) group ",
+    "rca": {
+      "category": "Ops Issue",
+      "subcategory": "Wrong Expectation - System working as expected",
+      "description": "PLan missing for EMP tier in noyo"
+    },
+    "priority": "Low",
+    "labels": [
+      "Ops_request"
+    ],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "[~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] On noyo there is only one plan (*Employee with Dependent*)\n\n!image-20250303-112514.png|width=2255,height=1264,alt=\"image-20250303-112514.png\"!\n\nBut employee has no dependent\n\n!Screenshot 2025-03-03 at 4.58.00\u202fPM.png|width=1141,height=906,alt=\"Screenshot 2025-03-03 at 4.58.00\u202fPM.png\"!\n\nSO first please add the plans on noyo and corresponding plan mapping in rippling system.",
+        "created_at": "2025-03-03T03:34:02.723-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pimittal@rippling.com"
+        }
+      },
+      {
+        "content": "Hi [~accountid:712020:abe99280-3b7d-4746-a0af-a62bb16d40bd] thanks for providing the root cause. It seems odd that Noyo does not have the \u2018Employee Only\u2019 version of this plan on file, so I will continue troubleshooting with them. I will file a new ticket if we need anything else from ENG here - this can be closed. Thanks! ",
+        "created_at": "2025-03-03T11:07:39.644-08:00",
+        "commenter": {
+          "name": "",
+          "email": "plynch@rippling.com"
+        }
+      },
+      {
+        "content": "Closing this ticket, Thanks [~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] ",
+        "created_at": "2025-03-05T02:40:57.56-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pimittal@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "plynch@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2025-02-14T09:58:50.433-08:00"
+  },
+  {
+    "key": "BENINTEG-4092",
+    "summary": "RevenueCat, Inc. // Dental plan mapping error blocking Noyo amendments ",
+    "description": "*Issue Description*: I pushed snapshots for several employees in this group; however, they errored out due to the following message: \n\n{{Unable to find a matching Noyo plan mapping information. Please collaborate with the INS Ops team to verify or update Noyo plan mappings for the Ripping plan: Dental PPO/EPO, line type: dental. Error details: Object type: , queried_with : {'company_id': '625f2b211d069934e4b0cc2b', 'noyo_group_id': 'c85ab8f7-a636-4327-b04a-009d03801e56', 'company_plan_info_id': '672eb8e22d9903b9133e8d4a', 'company_plan_info_plan_name': 'Dental PPO/EPO', 'member_type': 'employee', 'line_type': 'dental', 'classification_values': \"{'member_group': '2992548', 'bill_group': '10001'}\", 'carrier': 'Principal'}}}\n\nI checked the dental plan mapping in the Noyo plan mapper and confirmed that all Noyo dental plans are mapped to a Rippling dental plan (see attached), so it is unclear why this error message is generating and why a Noyo amendment cannot be submitted. \n\nBecause all of this group\u2019s Noyo-connected carriers use Snapshot API, this issue is blocking Rippling from transmitting Anthem coverage termination information for several employees, even though the error message pertains to the Principal dental plan. The group is escalated because they are not seeing that the Anthem terminations are getting processed - if left unresolved, the client will be forced to pay additional premiums for the extra months of coverage the employees would have.  \n\n*Account and EE Details*\n\nCompany ID: 625f2b211d069934e4b0cc2b\n\nCountry: USA\n\nARR: $55,504.68 \n\nEntity Name: RevenueCat, Inc.\n\nName & Role IDs of affected employee(s) / admin(s), if applicable - I have attached a .CSV containing all 35 impacted employees and their role ID information \n\nLink to payrun and payrun ID: N/A\n\nEscalated client: Yes\n\nPEO Customer: No\n\n*Troubleshooting actions taken so far*: \n\n# Verified that Noyo dental plans are mapped to a Rippling dental plan \n# Attempted to submit amendments via [census retool|https://retool.ripplinginternal.com/apps/f46a57a6-4b2f-11ef-900c-cb957f546f45/Carrier%20Connection%20Tools/Noyo%20Census%20Request%20Tool] and Noyo Amendment page in EE debugger, but recieved error messages both times \n\n*Action required from Eng*: Please outline why these snapshots are unable to be sent given that all Noyo dental plans are mapped to a Rippling dental plan. \n\n*Product-Specific Issue Details*: This issue pertains to a BOB group \n\nPlease let me know if you need any additional information form Ops to investigate further. ",
+    "rca": {
+      "category": "No Issue",
+      "subcategory": "",
+      "description": "Ops was able to self serve and resolve after filing the ticket "
+    },
+    "priority": "Medium",
+    "labels": [
+      "Ops_request"
+    ],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "Closing as NFE - discovered incorrect configuration assignments that have since been fixed. This issue will be reopened or a new issue will be created in ENG help is found to be needed for this group. ",
+        "created_at": "2025-02-18T09:51:41.273-08:00",
+        "commenter": {
+          "name": "",
+          "email": "plynch@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "plynch@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2025-02-13T15:44:22.401-08:00"
+  },
+  {
+    "key": "BENINTEG-4066",
+    "summary": "Anvyl Technologies LLC // Employee not sending a medical plan and is the only one experiencing this issue ",
+    "description": "*Issue Description:* Employee Taylor Oesterle is not sending medical enrollment due to the below error. \n\n*Unable to find a matching Noyo plan mapping information. Please collaborate with the INS Ops team to verify or update Noyo plan mappings for the Ripping plan: Anthem Platinum PPO 500/10%/2500 Rx Copay, line type: medical. Error details: Object type: , queried_with : {'company_id': '655bf7769031113bdfa1efd9', 'noyo_group_id': '8adc247a-02c7-45e1-88fa-68e09d6fea95', 'company_plan_info_id': '670d62f611546c06c4c69b7e', 'company_plan_info_plan_name': 'Anthem Platinum PPO 500/10%/2500 Rx Copay', 'member_type': 'spouse', 'line_type': 'medical', 'classification_values': '{}', 'carrier': 'Anthem'}*\n\nThis employee is the only one who is showing this error. I have reviewed the information in the Noyo Mapper, Proxy, and in Noyo. I cannot figure out why this employee is seeing this error and why they are the only one to have this error. \n\nAnvyl Technologies - 655bf7769031113bdfa1efd9\n\nAsk: Please review and explain why this error is occurring as well as how we can fix it so the medical enrollment sends over as it should. ",
+    "rca": {
+      "category": "Ops Issue",
+      "subcategory": "Manual Data Entry Error",
+      "description": "Incorrect plan mapping of discontinued plan"
+    },
+    "priority": "High",
+    "labels": [],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "[~accountid:712020:f7cfc89d-f420-462a-b580-075ad115947f] There was issue in Noyo Plan Mapping, discontinued plan was mapped. Once it was deleted, problem resolved. There is no more blocked transaction and for employee amendment tab is also opening\n\n!Screenshot 2025-02-20 at 6.04.05\u202fPM.png|width=1677,height=901,alt=\"Screenshot 2025-02-20 at 6.04.05\u202fPM.png\"!\n\n!Screenshot 2025-02-20 at 6.04.52\u202fPM.png|width=1693,height=662,alt=\"Screenshot 2025-02-20 at 6.04.52\u202fPM.png\"!\n\nThanks [~accountid:712020:77514d6a-6aff-473f-8610-a6b7eea130aa] for quick help\n\ncc: [~accountid:712020:77514d6a-6aff-473f-8610-a6b7eea130aa] ",
+        "created_at": "2025-02-20T04:36:40.592-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pimittal@rippling.com"
+        }
+      },
+      {
+        "content": "This is fixed and closing this as nothing else needed from eng side",
+        "created_at": "2025-02-20T04:36:54.882-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pimittal@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "breane.goyne@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2025-02-12T12:28:45.487-08:00"
+  },
+  {
+    "key": "BENINTEG-3997",
+    "summary": "Hearts and Hands Therapy Services / Incorrect Plan Mapping for Dental Plans",
+    "description": "Hi Team,\n\n[Hearts and Hands Therapy Services|https://app.rippling.com/super_user/insurance/company-event-debugger/search/652862b55aae5fb69de97be2]' Noyo plan mapping is set up incorrectly, and therefore, no member snapshots are being submitted properly. I am working with the EDI/API team, and they have confirmed that this is being caused by the plan mapping between the base dental plan and the buy-up dental plan. It appears it is sending the member group ID's for both these plans. See one employee example below:\n\n\n\n!Screenshot 2025-02-07 at 10.23.00\u202fAM.png|width=2184,height=1296,alt=\"Screenshot 2025-02-07 at 10.23.00\u202fAM.png\"!\n\n\n\nCan we please get this updated as soon as possible? ",
+    "rca": {
+      "category": "Noyo",
+      "subcategory": "Plan Mapping",
+      "description": "Same classification of bill group was added across mapping"
+    },
+    "priority": "Highest",
+    "labels": [],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "[~accountid:712020:47e8bc48-2f1d-4bd4-aca8-35b47c76f812] for vis",
+        "created_at": "2025-02-07T08:00:23.115-08:00",
+        "commenter": {
+          "name": "",
+          "email": "btoom@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:cc941da1-035d-4864-a5cf-8c9c95e6e63c] the error seems to be billing group. billing_group 10001 is not valid for this group and is present in both carrier_classification values for employee and in Noyo plan mapping.\nPlease do the following:\n1. fix company rules adding billing group 10001 to employees carrier_config\n2. remove billing_group from NoyoPlan mapping. Also for future reference please don\u2019t add a classification value which are common across all plan and not helping to disambiguate plan mapping.\n3. resend noyo snapshots for company\n\n\n!image-20250211-094207.png|width=1655,height=856,alt=\"image-20250211-094207.png\"!",
+        "created_at": "2025-02-11T01:58:12.008-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pmandil@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:0a8634f8-f8a0-41c4-926c-2aee91a99c83] I am not on the team that handles any of the plan configurations. Is this something ENG is able to assist with or will I need to loop in another team? ",
+        "created_at": "2025-02-11T05:22:22.189-08:00",
+        "commenter": {
+          "name": "",
+          "email": "btoom@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:0a8634f8-f8a0-41c4-926c-2aee91a99c83] Bill group 10001 is correct. See attached Principal configuration screenshot from noyo. \n\n!Screenshot 2025-02-11 at 11.59.18\u202fAM.png|width=430,height=371,alt=\"Screenshot 2025-02-11 at 11.59.18\u202fAM.png\"!\n\nBIll mapping has been removed from mapped configurations. ",
+        "created_at": "2025-02-11T09:04:10.345-08:00",
+        "commenter": {
+          "name": "",
+          "email": "bpark@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:47e8bc48-2f1d-4bd4-aca8-35b47c76f812] \nyou also need to remove bill group from employee classification values [link|https://app.rippling.com/super_user/insurance/employee-event-debugger/search/66ec1f6d5f53ff01fa257923?section=carrierConfigurationEvaluationResults].\n\nAny classification value which is same across all employees/ plans need not be added in classification value as these values are used for disambiguating plans and having same value doesn\u2019t provide any additional context.\n\nFor more details: [https://rippling.atlassian.net/wiki/spaces/INS/pages/3675881802/Noyo+Plan+Mapping#Configuration-Assignment|https://rippling.atlassian.net/wiki/spaces/INS/pages/3675881802/Noyo+Plan+Mapping#Configuration-Assignment|smart-link] \n\n\n\n!image-20250211-183554.png|width=1655,height=855,alt=\"image-20250211-183554.png\"!",
+        "created_at": "2025-02-11T10:38:29.418-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pmandil@rippling.com"
+        }
+      },
+      {
+        "content": "Hi [~accountid:712020:0a8634f8-f8a0-41c4-926c-2aee91a99c83] ! I believe we are all good for this group. [~accountid:712020:47e8bc48-2f1d-4bd4-aca8-35b47c76f812] was able to update the bill group. ",
+        "created_at": "2025-02-14T07:44:15.122-08:00",
+        "commenter": {
+          "name": "",
+          "email": "btoom@rippling.com"
+        }
+      },
+      {
+        "content": "Great [~accountid:712020:cc941da1-035d-4864-a5cf-8c9c95e6e63c] [~accountid:712020:47e8bc48-2f1d-4bd4-aca8-35b47c76f812] . closing the ticket since this is resolved.",
+        "created_at": "2025-02-16T21:06:05.579-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pmandil@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "btoom@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2025-02-07T07:58:55.282-08:00"
+  },
+  {
+    "key": "BENINTEG-3613",
+    "summary": "Noyo | Anvyl | Mapping issues - Anthem",
+    "description": "*Context:*\n\n* We have an escalated group with a number of mapping issues.\n* I have confirmed that carrier classifications are built and plans are mapped\n* I went to review a new hire from today - the NHE did not send to Noyo\n* When I go to trigger an amendment to manually push the enrollment, I see the following error: {{Unable to find a matching Noyo plan mapping information. Please collaborate with the INS Ops team to verify or update Noyo plan mappings for the Ripping plan: Anthem Gold PPO 3000/0%/3000 w/HSA, line type: medical. Error details: Object type: , queried_with : {'company_id': '655bf7769031113bdfa1efd9', 'noyo_group_id': '8adc247a-02c7-45e1-88fa-68e09d6fea95', 'company_plan_info_id': '670d62f711546c06c4c69b8d', 'company_plan_info_plan_name': 'Anthem Gold PPO 3000/0%/3000 w/HSA', 'member_type': 'employee', 'line_type': 'medical', 'classification_values': '{}', 'carrier': 'Anthem'}}}\n* It looks like there is a mapping issue for this EE/group but all looks correct to me\n* Client reports that no NHEs send over to carrier\n\n*Group:*\n\n* Anvyl Technologies\n* [655bf7769031113bdfa1efd9|https://app.rippling.com/super_user/insurance/company-event-debugger/search/655bf7769031113bdfa1efd9]\n\n*EE:*\n\n* Will Melanson\n* [675f52885d6c59792fdabe84|https://app.rippling.com/super_user/insurance/employee-event-debugger/search/675f52885d6c59792fdabe84?section=noyoAmendment]\n\n*Ask:*\n\n* Please review and assist with determining the root of this mapping issue\n* Thank you",
+    "rca": {
+      "category": "Noyo",
+      "subcategory": "Tooling",
+      "description": "we need to update NPM to contain discontinued plans"
+    },
+    "priority": "Highest",
+    "labels": [],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "update\n\nETA: tonight",
+        "created_at": "2025-01-13T23:31:02.259-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akathuria@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:a9715b83-e8ae-413e-8a25-dfcf374cfe4e] there are two plans on noyo\u2019s end with {{noyo_eligible_member_types}} as \u201call\u201c , there is no way  for us to distinct between these plans.\n\ni think one of them should be \u201cemployee-with-dependents\u201c and one should be \u201cemployee\u201c, could you confirm from noyo ?\n\nif they confirm, once they make the change on their end\n\n# please delete the mapping\n# recreate the mappings\n\n{noformat}[\n\t{\n\t\t\"id\": \"671b4fe2f804eeade0dfe0d2\",\n\t\t\"isDeleted\": \"False\",\n\t\t\"createdAt\": \"2024-10-25 07:59:30.040000+00:00\",\n\t\t\"updatedAt\": \"2024-10-25 07:59:30.132000+00:00\",\n\t\t\"lock\": \"None\",\n\t\t\"external_on_changes\": \"\",\n\t\t\"company\": \"brendan.walsh@anvyl.tech\",\n\t\t\"company_plan_info\": \"Gold PPO 3000/0%/3000 w/HSA\",\n\t\t\"noyo_group_id\": \"8adc247a-02c7-45e1-88fa-68e09d6fea95\",\n\t\t\"noyo_plan_id\": \"f17924ab-30eb-4bb9-b07f-f3746bfdd091\",\n\t\t\"noyo_eligible_member_types\": \"all\",\n\t\t\"noyo_line_type\": \"medical\",\n\t\t\"eligible_classification_values\": \"\",\n\t\t\"eligible_carrier_classifications\": \"\"\n\t},\n\t{\n\t\t\"id\": \"6785f4a48916cad7050ce4e0\",\n\t\t\"isDeleted\": \"False\",\n\t\t\"createdAt\": \"2025-01-14 05:22:44.226000+00:00\",\n\t\t\"updatedAt\": \"2025-01-14 05:22:44.227000+00:00\",\n\t\t\"lock\": \"None\",\n\t\t\"external_on_changes\": \"\",\n\t\t\"company\": \"brendan.walsh@anvyl.tech\",\n\t\t\"company_plan_info\": \"Gold PPO 3000/0%/3000 w/HSA\",\n\t\t\"noyo_group_id\": \"8adc247a-02c7-45e1-88fa-68e09d6fea95\",\n\t\t\"noyo_plan_id\": \"1e93c847-29eb-46a6-9b4c-1f6dbed4b38a\",\n\t\t\"noyo_eligible_member_types\": \"all\",\n\t\t\"noyo_line_type\": \"medical\",\n\t\t\"eligible_classification_values\": \"\",\n\t\t\"eligible_carrier_classifications\": \"\"\n\t}\n]{noformat}",
+        "created_at": "2025-01-13T23:42:47.166-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akathuria@rippling.com"
+        }
+      },
+      {
+        "content": "wait one of them is discontinued, we don\u2019t show discontinued plans in NPM\n\nRCA : [https://rippling.atlassian.net/browse/BENINTEG-3613|https://rippling.atlassian.net/browse/BENINTEG-3613|smart-link] \n\nI will delete the discontinued plan mapping",
+        "created_at": "2025-01-13T23:54:10.162-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akathuria@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:60c71897d5dde80071c79bbf] - can you take a look at this again - I have to meet with the client tomorrow so hope I can deliver good news.",
+        "created_at": "2025-01-14T17:43:48.916-08:00",
+        "commenter": {
+          "name": "",
+          "email": "pmcintyre@rippling.com"
+        }
+      },
+      {
+        "content": "{noformat}  return NoyoCompanyPlanInfo.objects.filter(company_plan_info=\"670d62f711546c06c4c69b8d\", id=\"671b4fe2f804eeade0dfe0d2\").delete(){noformat}\n\n[~accountid:712020:a9715b83-e8ae-413e-8a25-dfcf374cfe4e] should be resolved tonight , feel free to retry via carrier connections page",
+        "created_at": "2025-01-15T00:26:43.283-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akathuria@rippling.com"
+        }
+      },
+      {
+        "content": "This is resolved.",
+        "created_at": "2025-01-21T00:05:26.566-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akathuria@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "pmcintyre@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2025-01-13T22:18:15.432-08:00"
+  },
+  {
+    "key": "BENINTEG-2456",
+    "summary": "Transcend Privacy Inc. // Noyo Setup Tasks not clearing from Insurance Tasks Dashboard",
+    "description": "*Issue Description*: There are currently 4 Noyo Setup Tasks in the queue for this company\u2019s Guardian coverage. The setup tasks have the following messages: \n\n# Assign correct classification values to Noyo plan 30cc5fa9-1793-4e54-9705-315c3798f057 (see _task_1_)\n# Assign correct classification values to Noyo plan f1b9f356-2902-4455-9fcc-c7fcf9eef762 (see _task_2_)\n# Assign correct classification values to Noyo plan eccd98b4-ce5c-4fc0-b542-a352bc692fbc (see _task_3_)\n# Assign correct classification values to Noyo plan 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf (see _task_4_)\n\nI verified that these plans are mapped correctly in the Noyo Plan Mapper page. For example, you will see that plan 30cc5fa9-1793-4e54-9705-315c3798f057 (VSP - Choice Full Feature in Plan Mapper Page) is correctly mapped to just {{benefit_class_identifier}} 0003. I also pushed an amendment for an employee enrolling in plan f1b9f356-2902-4455-9fcc-c7fcf9eef762 (DENTAL DG7- TX in Plan Mapper Page) and did not receive any error messages, so there does not appear to be any plan mapping issues. As such, it is unclear why these tasks are generating when everything has already been set up correctly. \n\n*Account and EE Details*\n\nCompany ID: 64398590b924acd5d92b7ba4\n\nCountry: USA\n\nARR: $126,480.45\n\nEntity Name: Transcend Privacy Inc.\n\nName & Role IDs of affected employee(s) / admin(s), if applicable - N/A, group level issue \n\nEscalated client: No\n\nPEO Customer: No\n\n*Troubleshooting actions taken so far*: \n\n# Referred to guidance in [this runbook|https://rippling.atlassian.net/wiki/spaces/CCE/pages/2892007035/Base+Noyo+Setup+Task+Walkthrough#4.-Configuration-Assignment] for actioning these task types\n# Confirmed that all plans are mapped to the correct classifications in the Noyo Plan Mapper page \n# Pushed amendment for EE 656f7e89be01d92c2ef8d1f9 and did not receive any error messages. \n\n*Action required from Eng*: Please research why these tasks generated even though everything appears to be correctly set up already. \n\nPlease let me know if you need any additional information or clarification in order to research further. Thanks! ",
+    "rca": {
+      "category": "Ops Issue",
+      "subcategory": "Manual Data Entry Error",
+      "description": "A billing group was mapped incorrectly to multiple plans, causing overlapping Noyo plans to be mapped to Rippling plans. Initially there was also an issue with discotninued plans at Noyo's side being mapped with us, which were conflicting with the new Noyo plans - they were then cleared from the system and the tasks did not reopen"
+    },
+    "priority": "Low",
+    "labels": [
+      "Ops_request"
+    ],
+    "components": [
+      "Noyo"
+    ],
+    "comments": [
+      {
+        "content": "cc: [~accountid:60c71897d5dde80071c79bbf] correct me if I\u2019m mistaken, but was there a PR you had pushed in to fix this? If yes, will this resolve itself or are there any AIs on engg to get this resolved. lmk",
+        "created_at": "2024-11-12T00:19:29.284-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:60c71897d5dde80071c79bbf] can you reply to [~accountid:712020:22242127-2aeb-4390-a0fe-887e82515564] here. This will breach tomorrow",
+        "created_at": "2024-11-14T08:00:15.151-08:00",
+        "commenter": {
+          "name": "",
+          "email": "akarat@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:807130ae-fa46-43ed-bf0f-89e2080ea022] - I\u2019ve spoken to [~accountid:60c71897d5dde80071c79bbf] on this offline; he\u2019s confirmed that this is a different issue. The breach date is on my radar, I\u2019m working on this",
+        "created_at": "2024-11-14T08:09:15.837-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "I see the following {{additionalInformation}} for one of these tasks\n\n\n{noformat}Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: employee and line type: vision, but those mappings have no configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f13c99434059ef2c7781a, Rippling Plan: Guardian Long-Term Disability mapped to more than 1 Noyo plans under member type: employee and line type: ltd, but those mappings have no configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f12d383cdfd39b53ce2e1, Rippling Plan: Guardian Basic Life/AD&D mapped to more than 1 Noyo plans under member type: employee and line type: add, but those mappings have no configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: civil-union and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: adopted-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: ex-spouse and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: foster-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: legal-guardianship and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: step-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: domestic-partner and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: employee and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: other and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: spouse and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: eccd98b4-ce5c-4fc0-b542-a352bc692fbc, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: adopted-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: ex-spouse and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: step-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: employee and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: spouse and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: civil-union and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: other and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: foster-child and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: domestic-partner and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 30cc5fa9-1793-4e54-9705-315c3798f057, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: legal-guardianship and line type: vision, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: spouse and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: domestic-partner and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: step-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: ex-spouse and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: foster-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: legal-guardianship and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: civil-union and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: adopted-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: employee and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: f1b9f356-2902-4455-9fcc-c7fcf9eef762, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: other and line type: dental, but those mappings have overlapped configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f12d383cdfd39b53ce2e1, Rippling Plan: Guardian Basic Life/AD&D mapped to more than 1 Noyo plans under member type: employee and line type: life, but those mappings have no configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: legal-guardianship and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: adopted-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: other and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: civil-union and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: foster-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: step-child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: ex-spouse and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: child and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: spouse and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: employee and line type: dental, but those mappings have overlapped configuration assignments.;eligible_classification_type: billing_group,eligible_classification_value: 0000,noyo_plan_id: 9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf, Issue Type: Conflicts in config assignments. InsuranceCompanyInfo id: 667f119f09aea0381fb9ce72, Rippling Plan: Guardian Dental PPO mapped to more than 1 Noyo plans under member type: domestic-partner and line type: dental, but those mappings have overlapped configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: domestic-partner and line type: vision, but those mappings have no configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: spouse and line type: vision, but those mappings have no configuration assignments.;Issue Type: Missing assignments. InsuranceCompanyInfo id: 667f1230f7d10bbcc624192c, Rippling Plan: Guardian Vision mapped to more than 1 Noyo plans under member type: child and line type: vision, but those mappings have no configuration assignments.{noformat}\n\nI am seeing similar issues with the other tasks as well.",
+        "created_at": "2024-11-14T22:25:13.238-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "Digging a bit further, it turns out this issue is because for NCPs, the fields {{eligible_classification_values}} and {{eligible_carrier_classifications}} are both set to blank:\n\n{noformat}[\n\t{\n\t\t\"id\": \"667fc467539d3ebd2cb0e8b3\",\n\t\t\"isDeleted\": \"False\",\n\t\t\"createdAt\": \"2024-06-29 08:23:03.322000+00:00\",\n\t\t\"updatedAt\": \"2024-08-26 19:03:15.214000+00:00\",\n\t\t\"lock\": \"None\",\n\t\t\"external_on_changes\": \"\",\n\t\t\"company\": \"nancy@transcend.io\",\n\t\t\"company_plan_info\": \"Guardian Vision\",\n\t\t\"noyo_group_id\": \"c1076e50-8801-470f-a078-9899fc9422ca\",\n\t\t\"noyo_plan_id\": \"31a70afc-7f46-4417-bde6-a881d01b9f9e\",\n\t\t\"noyo_eligible_member_types\": \"employee\",\n\t\t\"noyo_line_type\": \"vision\",\n\t\t\"eligible_classification_values\": \"\",\n\t\t\"eligible_carrier_classifications\": \"\"\n\t}\n]{noformat}",
+        "created_at": "2024-11-15T00:39:22.267-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "Turns out there were some discontinued noyo plans which were still mapped to rippling plans, and the old plans did not have eligible classifications on them, causing the plan mapping resolver to mark those plan mappings as invalid. I have cleared all of our plans which are discontinued in Noyo, and the next run of the task resolver should mark these tasks as resolved.\n\n----\n\n*Dev Notes*\n\n{noformat}dced_plans = [x for x in NoyoAPI.get_group_plans(\"c1076e50-8801-470f-a078-9899fc9422ca\") if x[\"status\"] == \"discontinued\"]\nfor dced_plan in dced_plans:\n    print(\"Deleting mappings for discontinued plan\", dced_plan[\"id\"])\n    ncpis = NoyoCompanyPlanInfo.objects.filter(company=company, noyo_plan_id=dced_plan[\"id\"])\n    print(\" Found\", len(ncpis), \"NoyoCompanyPlanInfos\")\n    print(\"  IDs\", [str(x.id) for x in ncpis])\n    print(\"Lines\", [str(x.noyo_line_type) for x in ncpis])\n    if False:\n        ncpis.delete()\nreturn None{noformat}\n\nOutput:\n\n{noformat}Deleting mappings for discontinued plan a1cb7b7c-b4de-4c57-8800-459e9e9b473e\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead07', '667fc466539d3ebd2cb0e8a9']\nLines ['dental', 'dental']\nDeleting mappings for discontinued plan a4068070-ba83-414d-b250-b8a3b11069a5\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead09', '667fc467539d3ebd2cb0e8ad']\nLines ['dental', 'dental']\nDeleting mappings for discontinued plan cfc7c9c9-903e-49c6-909c-2d3dae12bcc3\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead0b', '667fc467539d3ebd2cb0e8af']\nLines ['dental', 'dental']\nDeleting mappings for discontinued plan ebff6613-d383-4b85-a365-48d82c963fa1\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead0d', '667fc467539d3ebd2cb0e8b1']\nLines ['dental', 'dental']\nDeleting mappings for discontinued plan 31a70afc-7f46-4417-bde6-a881d01b9f9e\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead0f', '667fc467539d3ebd2cb0e8b3']\nLines ['vision', 'vision']\nDeleting mappings for discontinued plan 5231866f-0adf-4aa2-a948-f4763321ac83\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead11', '667fc467539d3ebd2cb0e8b5']\nLines ['vision', 'vision']\nDeleting mappings for discontinued plan e8a7c80f-56cc-4636-b0b0-bf2eb0c130bd\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808c90cb2abfafeead13', '667fc467539d3ebd2cb0e8b7']\nLines ['life', 'life']\nDeleting mappings for discontinued plan dd3118e1-010d-401b-876f-f067e7a94862\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808e90cb2abfafeead15', '667fc467539d3ebd2cb0e8b9']\nLines ['add', 'add']\nDeleting mappings for discontinued plan 38dc5336-c22c-459f-bf66-e1487ff286a9\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808f90cb2abfafeead68', '667fc467539d3ebd2cb0e8c4']\nLines ['std', 'std']\nDeleting mappings for discontinued plan b803acab-46ba-4ff6-88ce-8161b3b8f049\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808f90cb2abfafeead6a', '667fc467539d3ebd2cb0e8c6']\nLines ['std', 'std']\nDeleting mappings for discontinued plan 026bd380-87c1-4edd-b08a-1abbaebcf2b3\n Found 2 NoyoCompanyPlanInfos\n  IDs ['6661808f90cb2abfafeead6c', '667fc467539d3ebd2cb0e8c8']\nLines ['ltd', 'ltd']{noformat}",
+        "created_at": "2024-11-15T01:11:26.166-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "Created a feature request ticket as well to handle this better - [https://rippling.atlassian.net/browse/BENINTEG-2809|https://rippling.atlassian.net/browse/BENINTEG-2809|smart-link] ",
+        "created_at": "2024-11-15T01:19:23.789-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] - please mark these insurance tasks as resolved, they shouldn\u2019t reopen. Let me know if this addresses the issue",
+        "created_at": "2024-11-15T02:56:23.78-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "Hi [~accountid:712020:22242127-2aeb-4390-a0fe-887e82515564] I have marked all tasks as resolved. I have a reminder set to check on Monday to see if they reopen and I will update this ticket with my findings. ",
+        "created_at": "2024-11-15T08:43:56.02-08:00",
+        "commenter": {
+          "name": "",
+          "email": "plynch@rippling.com"
+        }
+      },
+      {
+        "content": "That\u2019s perfect [~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] - thank you so much!",
+        "created_at": "2024-11-15T08:50:32.346-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "I see that some of them have reopened. Listing down the CPIs with issues:\n\n{noformat}667f1230f7d10bbcc624192c\n667f119f09aea0381fb9ce72{noformat}\n\nThey are all related to issues with issues with \u201coverlapping\u201d plan mappings\n\n!image-20241118-063835.png|width=3650,height=566,alt=\"image-20241118-063835.png\"!\n\nI fetched these plans from what is configured at our side v/s what is configured at Noyo\u2019s side, and it turns out that there is an {{0000}} class identifier mapping that is common to both - causing this overlapping error notice. Verifying this against what the plan config is at Noyo\u2019s side, neither of the plans are configured for billing group {{0000}}\n\n{noformat}CompanyPlanInfo 667f1230f7d10bbcc624192c\n     Noyo Plan name=VSP - Choice Full Feature id=30cc5fa9-1793-4e54-9705-315c3798f057\n     Eligible Classification Values (Rippling) - ['0000', '0003']\n     Plan configuration (Noyo) - {'benefit_class_identifiers': ['0003']}\n\n     Noyo Plan name=VSP - Choice Full Feature id=eccd98b4-ce5c-4fc0-b542-a352bc692fbc\n     Eligible Classification Values (Rippling) - ['0000', '0001', '0002', '0004']\n     Plan configuration (Noyo) - {'benefit_class_identifiers': ['0001', '0002', '0004']}\n\nCompanyPlanInfo 667f119f09aea0381fb9ce72\n     Noyo Plan name=DENTAL DG7 id=9b1cd228-4bc9-4d94-8a54-a0b528ddc2cf\n     Eligible Classification Values (Rippling) - ['0000', '0001', '0002', '0004']\n     Plan configuration (Noyo) - {'benefit_class_identifiers': ['0001', '0002', '0004']}\n\n     Noyo Plan name=DENTAL DG7- TX id=f1b9f356-2902-4455-9fcc-c7fcf9eef762\n     Eligible Classification Values (Rippling) - ['0000', '0003']\n     Plan configuration (Noyo) - {'benefit_class_identifiers': ['0003']}{noformat}\n\n[~accountid:60c71897d5dde80071c79bbf] - does this align with the overlapping error being reported?\n\n[~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] can you take a look and handle the case for {{0000}} in plan config? Once you do that, you can mark all 4 tasks as resolved and they shouldn\u2019t reopen",
+        "created_at": "2024-11-17T22:50:29.507-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "Hi [~accountid:712020:22242127-2aeb-4390-a0fe-887e82515564] I have unampped each affected Noyo plan from billing group {{0000}} (everything in red was previously mapped to billing group {{0000}}, but this is no longer the case). The tasks have also been marked as resolved. Please let me know if the tasks reopen again. \n\n!Screenshot 2024-11-18 at 9.08.04\u202fAM.png|width=478,height=756,alt=\"Screenshot 2024-11-18 at 9.08.04\u202fAM.png\"!",
+        "created_at": "2024-11-18T08:12:31.442-08:00",
+        "commenter": {
+          "name": "",
+          "email": "plynch@rippling.com"
+        }
+      },
+      {
+        "content": "Thanks [~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] , re-triggered {{check_for_noyo_transaction_prerequisites}} with ETA id -673b6a93880de2a999e4f146 (-[-link-|https://retool.ripplinginternal.com/apps/046fc4ba-2503-11ed-b587-ebcf855fb366/ETA%20Dashboard/eta-search?eta_id=673b6a93880de2a999e4f146&executionNamespace=]-)- {{673b6d07c2b79b0789491dd7}} ([link|https://retool.ripplinginternal.com/apps/046fc4ba-2503-11ed-b587-ebcf855fb366/ETA%20Dashboard/eta-search?eta_id=673b6d07c2b79b0789491dd7&executionNamespace=]). If this executes successfully without reopening the tasks, we are good from our side.",
+        "created_at": "2024-11-18T08:28:33.479-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      },
+      {
+        "content": "[~accountid:712020:8af51dcc-aea1-4564-9504-74f5ffb81961] - the ETA ran successfully, and the tasks did not reopen. I\u2019m marking this ticket as resolved, please reopen if you see similar tasks reopen again.",
+        "created_at": "2024-11-18T18:32:41.707-08:00",
+        "commenter": {
+          "name": "",
+          "email": "rprabhu@rippling.com"
+        }
+      }
+    ],
+    "creator": {
+      "name": "",
+      "email": "plynch@rippling.com"
+    },
+    "board_changes": null,
+    "created_on": "2024-10-17T14:46:11.248-07:00"
+  }
+]

@@ -5,3 +5,4 @@ local_outputs/
 .env
 logs.txt
 *.sqlite3
+chroma*/
