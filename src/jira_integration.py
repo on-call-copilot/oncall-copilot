@@ -64,8 +64,10 @@ class JiraIntegrator:
 
             logger.info(f"Fetching details for Jira issue: {issue_key}")
             issue = self.jira.issue(issue_key)
-            fields = self.jira.fields()
             
+            # Safely get custom field values
+            company_id = getattr(issue.fields, 'customfield_10046', None)
+            role_id = getattr(issue.fields, 'customfield_10047', None)
 
             # Extract relevant information
             issue_details = {
@@ -85,10 +87,9 @@ class JiraIntegrator:
                 } if issue.fields.assignee else None,
                 "created": issue.fields.created,
                 "updated": issue.fields.updated,
-                "labels": issue.fields.labels,
-                "companyId": issue.fields.customfield_10046,
-                "roleId": issue.fields.customfield_10047
-
+                "labels": issue.fields.labels if hasattr(issue.fields, 'labels') else [],
+                "companyId": company_id,
+                "roleId": role_id
             }
 
             logger.debug(f"Successfully fetched details for issue {issue_key}")
