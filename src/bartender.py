@@ -81,8 +81,8 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
                 additional_context += "Custom Communication Details:\n"
                 additional_context += json.dumps(comm_details, indent=2)
 
-            messages.append({"role": "user", "content": additional_context})
-
+            # messages.append({"role": "user", "content": additional_context})
+            messages[3]["content"] = additional_context
             # modify the system prompt to include the additional context
             messages[0]["content"] = get_followup_resolver_system_prompt()
 
@@ -99,7 +99,8 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     
     # Enables Jira comment posting
     if ticket_url and response_to_post_on_jira:
-        jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response_to_post_on_jira.choices[0].message.content)
+
+        jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response_to_post_on_jira)
     
 if __name__ == "__main__":
     triage_ticket()
