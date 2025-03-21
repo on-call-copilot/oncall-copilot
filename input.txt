@@ -9,8 +9,9 @@ Outdated/existing information currently on file: Enrollment emails had gone out 
 New information that should be on file: BlueShield of California enrollment emails need to go to abc@def.com.
 
 Proof that new information that should be on file is accurate/correct: Initial emails were sent to ASDcustomerservice@benefitmall.com and miriam@cryptocouncil.org on 1/6 and no response received for confirmation of enrollment.
+
 https://rippling.lightning.force.com/lightning/r/500Ud00000I48KnIAJ/view
 
 I manually sent the enrollment to abc@def.com on 1/8 and received an acknowledgement the same day.
-https://rippling.lightning.force.com/lightning/r/500Ud00000IBbJdIAL/view
 
+https://rippling.lightning.force.com/lightning/r/500Ud00000IBbJdIAL/view

@@ -4,6 +4,7 @@ Output the response in the following JSON format, but do not render it as markdo
 
 {
     "company_id": "company_id",
+    "company_plan_info_id": "company_plan_info_id" (if provided),
     "data_models": ["data_model_1", "data_model_2", "data_model_3"]
 }
 """

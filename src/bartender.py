@@ -7,7 +7,7 @@ from resolver_prompt import get_resolver_system_prompt, get_resolver_user_prompt
 from query_markdown import get_similar_markdown_docs
 from jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
-from utils.files import read_markdown_file
+from utils.files import format_json_to_string, read_markdown_file
 from follow_up_prompt import FOLLOW_UP_PROMPT
 from rippling_api import RipplingApiHandler
 
@@ -35,7 +35,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
         ]
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     response = client.chat.completions.create(
-        model="gpt-4-turbo",
+        model="gpt-4o",
         messages=messages,
     )
     print(response.choices[0].message.content)
@@ -47,7 +47,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     messages.append({"role": "user", "content": FOLLOW_UP_PROMPT})
     
     follow_up_response = client.chat.completions.create(
-        model="gpt-4-turbo",
+        model="gpt-4o",
         messages=messages,
     )
     print("\nFollow-up response:")
@@ -56,6 +56,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     try:
         data_models_response = json.loads(follow_up_response.choices[0].message.content)
         company_id = data_models_response.get("company_id")
+        company_plan_info_id = data_models_response.get("company_plan_info_id", None)
         data_models = data_models_response.get("data_models", [])
 
         noyo_info = None
@@ -63,7 +64,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
 
         if "NoyoCompanyPlanInfo" in data_models:
             print("\nFetching Noyo Company Plan Info:")
-            noyo_info = rippling_handler.get_noyo_company_plan_info(company_id)
+            noyo_info = rippling_handler.get_noyo_company_plan_info(company_id, company_plan_info_id)
             print(noyo_info)
 
         if any("Communication" in model for model in data_models):
@@ -71,23 +72,27 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
             comm_details = rippling_handler.get_custom_communication_detail(company_id)
             print(comm_details)
 
+        # breakpoint()
         # Only proceed with the additional message if we have either noyo_info or comm_details
         if noyo_info or comm_details:
-            additional_context = "Here is additional context from our systems:\n\n"
+            additional_context = "Here is additional context from our systems. Carefully analyze the data and use it to help resolve the issue:\n\n"
             if noyo_info:
-                additional_context += "Noyo Company Plan Information:\n"
-                additional_context += json.dumps(noyo_info, indent=2) + "\n\n"
+                additional_context += "Noyo Company Plan Info objects models in database:\n"
+                additional_context += format_json_to_string(json.loads(noyo_info))
             if comm_details:
                 additional_context += "Custom Communication Details:\n"
-                additional_context += json.dumps(comm_details, indent=2)
+                additional_context += format_json_to_string(json.loads(comm_details))
 
-            messages.append({"role": "user", "content": additional_context})
+
+            print("Additional context::::::::::::::", additional_context)
+            # messages.append({"role": "user", "content": additional_context})
+            messages[3]["content"] = additional_context
 
             # modify the system prompt to include the additional context
             messages[0]["content"] = get_followup_resolver_system_prompt()
 
             final_response = client.chat.completions.create(
-                model="gpt-4-turbo",
+                model="gpt-4o",
                 messages=messages,
             )
             print("\nFinal analysis with additional context:")
