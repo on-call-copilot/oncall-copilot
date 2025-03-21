@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Optional
 import dotenv
@@ -8,10 +9,9 @@ from jira_integration import JiraIntegrator
 from test_similar_tickets import get_similar_tickets
 from utils.files import read_markdown_file
 from follow_up_prompt import FOLLOW_UP_PROMPT
-from rippling_api import get_noyo_company_plan_info_objects, get_custom_communication_detail_objects
-import json
+from rippling_api import RipplingApiHandler
 
-jira_client = JiraIntegrator()
+# jira_client = JiraIntegrator()
 def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = None):
     # new_ticket_details = input("Enter the details of the ticket troubling you:")
     if new_ticket_details is None:
@@ -24,6 +24,9 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     user_resolver_prompt = get_resolver_user_prompt(other_docs, new_ticket_details, ticket_string)
     system_resolver_prompt = get_resolver_system_prompt()
 
+    # Initialize the RipplingApiHandler
+    rippling_handler = RipplingApiHandler()
+
     dotenv.load_dotenv()
     messages = [
             {"role": "system", "content": system_resolver_prompt},
@@ -35,6 +38,8 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
         messages=messages,
     )
     print(response.choices[0].message.content)
+
+    
 
     
     messages.append({"role": "assistant", "content": response.choices[0].message.content})
@@ -57,12 +62,12 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
 
         if "NoyoCompanyPlanInfo" in data_models:
             print("\nFetching Noyo Company Plan Info:")
-            noyo_info = get_noyo_company_plan_info_objects(company_id)
+            noyo_info = rippling_handler.get_noyo_company_plan_info(company_id)
             print(noyo_info)
 
         if any("Communication" in model for model in data_models):
             print("\nFetching Custom Communication Details:")
-            comm_details = get_custom_communication_detail_objects(company_id)
+            comm_details = rippling_handler.get_custom_communication_detail(company_id)
             print(comm_details)
 
         # Only proceed with the additional message if we have either noyo_info or comm_details
@@ -76,10 +81,6 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
                 additional_context += json.dumps(comm_details, indent=2)
 
             messages.append({"role": "user", "content": additional_context})
-
-            print(additional_context)
-
-            return
 
             # modify the system prompt to include the additional context
             messages[0]["content"] = get_followup_resolver_system_prompt()

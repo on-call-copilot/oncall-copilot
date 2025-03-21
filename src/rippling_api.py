@@ -1,75 +1,82 @@
+import os
+import dotenv
 import requests
 import json
 
-token = 'Bearer b3P8MbaJK86WUZarOxZzAXNfWAd9Hk'
 
-def rippling_api_handler(path: str, params: dict = {}, payload: dict = {}, company_id: str = None, role_id: str = None):
-    params_reduced = '&'.join([f'{k}={v}' for k, v in params.items()])
-    url = f"https://app.rippling.com{path}?{params_reduced}"
+class RipplingApiHandler:
+    def __init__(self):
+        """Initialize the RipplingApiHandler with authentication details."""
+        dotenv.load_dotenv()
+            
+        self.token = os.getenv("TOKEN")
+        self.role_id = os.getenv("ROLE_ID")
+        self.company_id = os.getenv("COMPANY_ID")
 
-    assert token.startswith('Bearer ')
+    def _make_request(self, path: str, params: dict = None, payload: dict = None):
+        """Internal method to make API requests to Rippling.
+        
+        Args:
+            path (str): The API endpoint path
+            params (dict): Query parameters
+            payload (dict): Request payload
+            override_company_id (str): Optional company ID to override the default
+        """
+        params = params or {}
+        payload = payload or {}
+        params_reduced = '&'.join([f'{k}={v}' for k, v in params.items()])
+        url = f"https://app.rippling.com{path}?{params_reduced}"
 
-    headers = {
-        'authorization': token,
-        'requestedaccesslevel': 'STAFF_USER'
-    }
+        headers = {
+            'authorization': self.token,
+            'requestedaccesslevel': 'STAFF_USER'
+        }
 
-    if role_id:
-        headers['role'] = role_id
+        if self.role_id:
+            headers['role'] = self.role_id
 
-    if company_id:
-        headers['company'] = company_id
+        if self.company_id:
+            headers['company'] = self.company_id
 
-    try:
-        response = requests.request("GET", url, headers=headers, data=payload)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        return response.text
-    except requests.exceptions.RequestException as e:
-        print(f"Error making request: {e}")
-        print(f"Response status code: {response.status_code}")
-        print(f"Response text: {response.text}")
-        return None
+        try:
+            response = requests.request("GET", url, headers=headers, data=payload)
+            response.raise_for_status()
+            return response.text
+        except requests.exceptions.RequestException as e:
+            print(f"Error making request: {e}")
+            print(f"Response status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+            return None
 
-def get_all_carriers_that_require_packets(enrollment_event_id: str, company_id: str, role_id: str):
-    """Get all carriers that require packets for a given enrollment event."""
-    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_all_carriers_that_require_packets"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
+    def get_noyo_company_plan_info(self, company_id: str):
+        """Get noyo company plan info objects for a given company.
+        
+        Args:
+            company_id (str): Optional company ID to override the default
+        """
+        path = "/api/insurance/api/noyo_company_plan_info/"
+        return self._make_request(
+            path, 
+            params={'company': company_id},
+        )
 
-def get_line_wise_carriers_and_plans_for_event(enrollment_event_id: str, company_id: str, role_id: str):
-    """Get line-wise carriers and plans for a given enrollment event."""
-    path = f"/api/insurance/api/base_company_enrollment_event/{enrollment_event_id}/get_line_wise_carriers_and_plans_for_event"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
-
-def get_renewal_details_for_lines_involved(enrollment_event_id: str, company_id: str, role_id: str):
-    """Get renewal details for lines involved in an enrollment event."""
-    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_renewal_details_for_lines_involved"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
-
-def get_total_employee_count_for_submission(enrollment_event_id: str, company_id: str, role_id: str):
-    """Get total employee count for submission for a given enrollment event."""
-    path = f"/api/insurance/api/company_enrollment_event/{enrollment_event_id}/get_total_employee_count_for_submission"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
-
-def get_selected_eligibility_cclis_for_company_event(company_enrollment_event_id: str, company_id: str, role_id: str):
-    """Get selected eligibility cclis for a given company event."""
-    path = f"/api/insurance/api/eligibility_company_carrier_line_info/get_selected_eligibility_cclis_for_company_event?companyEnrollmentEventId={company_enrollment_event_id}"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
-
-def get_total_employee_count_for_submission(company_enrollment_event_id: str, company_id: str, role_id: str):
-    """Get total employee count for submission for a given company event."""
-    path = f"/api/insurance/api/company_enrollment_event/{company_enrollment_event_id}/get_total_employee_count_for_submission"
-    return rippling_api_handler(path, company_id=company_id, role_id=role_id)
+    def get_custom_communication_detail(self, company_id: str):
+        """Get custom communication detail objects for a given company.
+        
+        Args:
+            company_id (str): company ID to override the default
+        """
+        path = "/api/insurance/api/custom_communication_detail/"
+        return self._make_request(
+            path, 
+            params={'company': company_id},
+        )
 
 
-
-# print("\nTesting get_all_carriers_that_require_packets:")
-# print(get_all_carriers_that_require_packets(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
-
-# print("\nTesting get_line_wise_carriers_and_plans_for_event:")
-# print(get_line_wise_carriers_and_plans_for_event(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
-
-# print("\nTesting get_renewal_details_for_lines_involved:")
-# print(get_renewal_details_for_lines_involved(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
-
-# print("\nTesting get_total_employee_count_for_submission:")
-# print(get_total_employee_count_for_submission(enrollment_event_id='651c281fd6554f8c0bd8a0ec', company_id='585c512df20db5063607e146', role_id='66bb21feb04ae2fc4ea74c43'))
+if __name__ == "__main__":
+    dotenv.load_dotenv()
+    handler = RipplingApiHandler()
+    
+    # Example usage
+    print(handler.get_noyo_company_plan_info('637545f1a3a2c9c8f4adef54'))
+    print(handler.get_custom_communication_detail('6218e901df1a3783f80b0002'))
