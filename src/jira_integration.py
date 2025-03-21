@@ -1,4 +1,5 @@
 import os
+import subprocess
 import dotenv
 import requests
 import re
@@ -9,153 +10,17 @@ from jira import JIRA
 import logging
 from typing import Optional, Dict
 
+from markdown_to_adf import markdown_to_adf
+
 logger = logging.getLogger('bartender_api')
 
+node_script_path = os.path.join(os.path.dirname(__file__), 'md-to-adf-test/test.js')
 class JiraIntegrator:
     def __init__(self):
         self.jira = None
         self.setup_jira()
         dotenv.load_dotenv()
-
-    def markdown_to_adf(self, markdown_text):
-        """
-        Convert Markdown to Atlassian Document Format (ADF)
-        This function uses the Atlassian Document Format converter API
-        to transform markdown into ADF JSON structure.
-        """
-        # Option 1: Use Atlassian's Cloud API (if you have access)
-        url = "https://api.atlassian.com/document/converter"
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-        
-        payload = {
-            "sourceFormat": "markdown",
-            "targetFormat": "adf", 
-            "content": markdown_text
-        }
-        
-        try:
-            response = requests.post(url, headers=headers, json=payload)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error converting Markdown to ADF: {e}")
-            # If API fails, use the manual conversion fallback below
-            return self.manual_markdown_to_adf(markdown_text)
-
-
-    def manual_markdown_to_adf(self, markdown_text):
-        """
-        A simplified manual conversion of Markdown to ADF.
-        This is not comprehensive but handles basic Markdown elements.
-        """
-        import re
-        
-        # Initialize the ADF document structure
-        adf = {
-            "version": 1,
-            "type": "doc",
-            "content": []
-        }
-        
-        # Split the markdown by lines
-        lines = markdown_text.split('\n')
-        current_paragraph = None
-        in_list = False
-        list_items = []
-        
-        for line in lines:
-            # Handle headings
-            heading_match = re.match(r'^(#{1,6})\s+(.+)$', line)
-            if heading_match:
-                level = len(heading_match.group(1))
-                heading_text = heading_match.group(2)
-                
-                adf["content"].append({
-                    "type": "heading",
-                    "attrs": {"level": level},
-                    "content": [{"type": "text", "text": heading_text}]
-                })
-                continue
-                
-            # Handle bullet lists
-            if line.strip().startswith('- ') or line.strip().startswith('* '):
-                list_text = line.strip()[2:]
-                if not in_list:
-                    in_list = True
-                    list_items = []
-                
-                list_items.append({
-                    "type": "listItem",
-                    "content": [{
-                        "type": "paragraph",
-                        "content": [{"type": "text", "text": list_text}]
-                    }]
-                })
-                continue
-            elif in_list and line.strip() == '':
-                # End of list
-                adf["content"].append({
-                    "type": "bulletList",
-                    "content": list_items
-                })
-                in_list = False
-                list_items = []
-                continue
-                
-            # Handle code blocks (simple version)
-            if line.strip().startswith('```'):
-                # We'll skip full code block handling for simplicity
-                continue
-                
-            # Handle bold and italic (simplified)
-            # This is much more complex in reality and would need a proper parser
-            
-            # Handle paragraphs (anything else)
-            if line.strip():
-                # Process inline formatting (bold, italic, links)
-                # This is simplified for demonstration
-                
-                # Bold text: **text** or __text__
-                bold_pattern = r'\*\*(.*?)\*\*|__(.*?)__'
-                # Italic text: *text* or _text_
-                italic_pattern = r'\*(.*?)\*|_(.*?)_'
-                # Links: [text](url)
-                link_pattern = r'\[(.*?)\]\((.*?)\)'
-                
-                # For simplicity, we're just adding the line as plain text
-                # A real implementation would parse these inline elements
-                
-                adf["content"].append({
-                    "type": "paragraph",
-                    "content": [{"type": "text", "text": line}]
-                })
-        
-        # Handle any remaining list
-        if in_list:
-            adf["content"].append({
-                "type": "bulletList",
-                "content": list_items
-            })
-        
-        return adf
-
-
-    def plain_text_to_markdown(self, text):
-        # Add simple Markdown formatting
-        # Headers (lines ending with colon)
-        text = re.sub(r'^(.+):$', r'## \1', text, flags=re.MULTILINE)
-        
-        # Auto-detect URLs and convert to links
-        url_pattern = r'https?://[^\s]+'
-        text = re.sub(url_pattern, lambda m: f'[{m.group(0)}]({m.group(0)})', text)
-        
-        # Format paragraphs properly
-        paragraphs = re.split(r'\n\s*\n', text)
-        return '\n\n'.join(paragraphs)
-
+   
     def setup_jira(self):
         """Initialize Jira client with credentials from environment variables"""
         try:
@@ -250,12 +115,6 @@ class JiraIntegrator:
         # Extract the Jira domain from the URL
         parsed_url = urlparse(ticket_url)
         jira_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
-
-        comment_text = f"""
-        ```
-        {comment_text}
-        ```
-        """
         
         # Extract the issue key from the URL
         issue_key = self.extract_issue_key(ticket_url)
@@ -276,24 +135,12 @@ class JiraIntegrator:
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
+
+        adf_comment = markdown_to_adf(comment_text)
         
         # Prepare the comment payload (using Jira API 3.0 format)
         payload = {
-            "body": {
-                "type": "doc",
-                "version": 1,
-                "content": [
-                    {
-                        "type": "paragraph",
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": comment_text
-                            }
-                        ]
-                    }
-                ]
-            }
+            "body": adf_comment
         }
 
         
@@ -314,9 +161,8 @@ class JiraIntegrator:
             print(f"Response: {response.text}")
             response.raise_for_status()
 
-
 if __name__ == "__main__":
-    # Set up argument parser
+
     parser = argparse.ArgumentParser(description='Post a comment to a Jira issue')
     parser.add_argument('jira_url', help='URL of the Jira issue')
     parser.add_argument('comment', help='Comment text to post')
