@@ -11,9 +11,8 @@ from utils.files import read_markdown_file
 from follow_up_prompt import FOLLOW_UP_PROMPT
 from rippling_api import RipplingApiHandler
 
-# jira_client = JiraIntegrator()
+jira_client = JiraIntegrator()
 def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = None):
-    # new_ticket_details = input("Enter the details of the ticket troubling you:")
     if new_ticket_details is None:
         new_ticket_details = read_markdown_file("input.txt")
     other_docs = get_similar_markdown_docs(new_ticket_details, 3)
@@ -27,6 +26,8 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     # Initialize the RipplingApiHandler
     rippling_handler = RipplingApiHandler()
 
+    response_to_post_on_jira = None
+
     dotenv.load_dotenv()
     messages = [
             {"role": "system", "content": system_resolver_prompt},
@@ -39,7 +40,7 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
     )
     print(response.choices[0].message.content)
 
-    
+    response_to_post_on_jira = response.choices[0].message.content
 
     
     messages.append({"role": "assistant", "content": response.choices[0].message.content})
@@ -91,14 +92,14 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
             )
             print("\nFinal analysis with additional context:")
             print(final_response.choices[0].message.content)
-            
+            response_to_post_on_jira = final_response.choices[0].message.content
     except json.JSONDecodeError:
         print("Failed to parse follow-up response as JSON")
 
     
-    # Uncomment to enable Jira comment posting
-    # if ticket_url:
-    #     jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response.choices[0].message.content)
+    # Enables Jira comment posting
+    if ticket_url and response_to_post_on_jira:
+        jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response_to_post_on_jira.choices[0].message.content)
     
 if __name__ == "__main__":
     triage_ticket()
