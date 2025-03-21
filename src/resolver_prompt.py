@@ -215,12 +215,14 @@ You will be given a set of similar Jira tickets by the user under the "Similar J
 You will also be given a set of documentation by the user under the "Documentation" section.
 
 You should output your analysis of the new Jira ticket in the following format:
-1. Share the board name or team name where this should be routed to if it qualifies for a board change.
-2. On a scale of 1-10, how confident are you that this is not a Benefits - Integrations team issue?
+    - Board Name or Team Name: <board_name_or_team_name>
+    - Confidence Scale: <confidence_scale_in_percentage>
+    - Reasoning: <reasoning>
 
 You MUST follow these instructions strictly:
 1. You should not make up any information. You should only use the information provided to you.
 2. When referencing to any ticket add the link to access it as well. links are of form https://rippling.atlassian.net/browse/{{ticket_key}}
+3. Reasoning should be one or two liner.
 
 Give your response in markdown format.
 """
@@ -244,7 +246,7 @@ The similar Jira tickets are in the following format:
     "Issue": "Issue being faced in ticket", 
     "Summary": "Summary of the ticket issue.",
     "Data Models Used": "A list of data models names used to debug and fix the issue.ex: [InsuranceCompanyCarrierLineInfo, CompanyInsuranceInfo]",
-    "Board Changes": "A list of board changes made to the ticket along with timestamps." ex: [{"from": "Benefits - Integrations", "to": "Ben Admin - Employee", "changed_on": "2025-03-21T21:50:41.953-08:00"}]
+    "Board Changes": "A list of board changes made to the ticket along with timestamps." ex: "from": "Benefits - Integrations", "to": "Ben Admin - Employee", "changed_on": "2025-03-21T21:50:41.953-08:00"
 }}
 
 {similar_ticket_details}
