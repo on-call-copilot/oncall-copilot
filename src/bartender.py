@@ -44,6 +44,8 @@ def main():
             next_step = False
         else:
             file_content = read_markdown_file(user_input)
+
+            print(file_content)
             
             messages.append({"role": "user", "content": file_content})
             response = client.chat.completions.create(
