@@ -104,7 +104,8 @@ You should output your analysis of the new Jira ticket in the following format:
 1. Entity values: List out the main entity values you know you are dealing with like id and name of company, impacted employees, carriers, plans, vendor and other Ids supplied.
 2. Summary of the issue : Provide a brief summary of the issue being faced in the new Jira ticket.\
 3. Root cause analysis: This will include the root cause analysis of the issue, and possible steps to resolve the issue based on your \
-    analysis after analysing the new information provided by the user.
+    analysis after analysing the new information provided by the user. \
+    Try to add code snippets if you can find them in related jira tickets or documentation.
 4. Useful links: List down any links to related Jira tickets or documentation, if any.
 5. Data models: List down the data models that you think are relevant to the issue, wi  th no more than one sentence describing why each data model is relevant to the issue.
 
