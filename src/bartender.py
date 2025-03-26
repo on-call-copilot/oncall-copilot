@@ -89,8 +89,6 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
             # modify the system prompt to include the additional context
             messages[0]["content"] = get_followup_resolver_system_prompt()
 
-            breakpoint()
-
             final_response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=messages,
@@ -103,9 +101,9 @@ def triage_ticket(new_ticket_details: Optional[str] = None, ticket_url: str = No
 
     
     # Enables Jira comment posting
-    if ticket_url and response_to_post_on_jira:
+    # if ticket_url and response_to_post_on_jira:
 
-        jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response_to_post_on_jira)
+    #     jira_client.post_jira_comment(ticket_url=ticket_url, comment_text=response_to_post_on_jira)
     
 if __name__ == "__main__":
     triage_ticket()
