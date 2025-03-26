@@ -1,3 +1,5 @@
+Please correct the email address for BlueShield of California where enrollments emails are sent for this group - Crypto Council for Innovation Inc (COID: 6218e901df1a3783f80b0002)
+
 Carrier Object Name: BlueShield of California
 
 Carrier State Code: CA
@@ -6,7 +8,7 @@ Type of information that needs updating: The email address for BlueShield of Cal
 
 Outdated/existing information currently on file: Enrollment emails had gone out to ASDcustomerservice@benefitmall.com and miriam@cryptocouncil.org.
 
-New information that should be on file: BlueShield of California enrollment emails need to go to abc@def.com.
+New information that should be on file: BlueShield of California enrollment emails need to go to cs@alliedadministrators.com.
 
 Proof that new information that should be on file is accurate/correct: Initial emails were sent to ASDcustomerservice@benefitmall.com and miriam@cryptocouncil.org on 1/6 and no response received for confirmation of enrollment.
 

@@ -39,15 +39,16 @@ A Python-based application for managing on-call operations and documentation.
 
 To run the application locally without Jira integration:
 
-1. Comment out line 14 in `src/bartender.py` to disable Jira functionality:
-   ```python
-   # jira_client = JiraIntegrator()
-   ```
-2. Paste your input (Jira description) in the `input.txt` file
-3. Run the processing script:
+1. Paste your input ticket details with description in the `input.txt` file
+2. Run the processing script:
    ```bash
-   python src/bartender.py
+   python src/bartender_local.py
    ```
+3. For additional analysis or follow-up questions:
+   - Write your follow-up question in `next_input.txt`
+   - Enter 'Y' to continue
+   - The first analysis and final analysis will be printed and saved to `response.md`
+   - You can preview the formatted response using Cmd+Shift+V in VSCode (with cursor on the file)
 
 ## Requirements
 

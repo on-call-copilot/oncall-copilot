@@ -1,38 +1,16 @@
-Here is the result of NoyoCompanyPlanInfo objects for this company. 
-
-```
 [
 	{
-		"id": "67b06c6f0c09794ead65b4e6",
+		"id": "64a7c0d232dcd032415c0571",
+		"emailAddress": "ASDcustomerservice@benefitmall.com,miriam@cryptocouncil.org",
+		"supportsSecureEmail": "True",
+		"companyEntityRelationshipId": "None",
 		"isDeleted": "False",
-		"createdAt": "2025-02-15 10:29:03.546000+00:00",
-		"updatedAt": "2025-02-15 10:29:03.553000+00:00",
+		"createdAt": "2023-07-07 07:37:54.449000+00:00",
+		"updatedAt": "2023-07-07 07:37:54.449000+00:00",
 		"lock": "None",
 		"external_on_changes": "",
-		"company": "mohamed@claryo.co",
-		"company_plan_info": "SmartPremium Plus 100/80/50/50-1500-1500",
-		"noyo_group_id": "a2c66c38-8b0f-43c2-9e13-c252e881754b",
-		"noyo_plan_id": "4f2c8220-0589-4e72-9e2c-3c870a794640",
-		"noyo_eligible_member_types": "all",
-		"noyo_line_type": "dental",
-		"eligible_classification_values": "",
-		"eligible_carrier_classifications": ""
-	},
-	{
-		"id": "67be25fdce2b1462b3850083",
-		"isDeleted": "False",
-		"createdAt": "2025-02-25 20:20:13.046000+00:00",
-		"updatedAt": "2025-02-25 20:20:13.046000+00:00",
-		"lock": "None",
-		"external_on_changes": "",
-		"company": "mohamed@claryo.co",
-		"company_plan_info": "SmartPremium Plus 100/80/50/50-1500-1500",
-		"noyo_group_id": "a2c66c38-8b0f-43c2-9e13-c252e881754b",
-		"noyo_plan_id": "f8e1434e-006b-4fa6-b4ca-6eeec29e8f9a",
-		"noyo_eligible_member_types": "all",
-		"noyo_line_type": "dental",
-		"eligible_classification_values": "",
-		"eligible_carrier_classifications": ""
+		"company": "annie@cryptocouncil.org",
+		"carrier": "BlueShield of California:['70285']",
+		"_cls": "CustomCommunicationDetail.CustomEmailCommunicationDetail"
 	}
 ]
-```
